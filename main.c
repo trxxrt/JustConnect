@@ -2,7 +2,7 @@
 
 int main (int argc, char *argv[])
 {
-    global_init();
-    display_main_menu(argc, argv);
+    global_init(argc, argv);
+    main_menu();
     return 0;
 }

@@ -1,16 +1,11 @@
 #include "main_menu.h"
 
-void display_main_menu (int argc, char *argv[])
+void display_main_menu ()
 {
     // 0. déclaration des variables
     GtkWidget *button = NULL;
     GtkWidget *win = NULL;
     GtkWidget *vbox = NULL;
-
-    // 1. initialisation de gtk
-    g_log_set_handler ("Gtk", G_LOG_LEVEL_WARNING, (GLogFunc) gtk_false, NULL);
-    gtk_init (&argc, &argv);
-    g_log_set_handler ("Gtk", G_LOG_LEVEL_WARNING, g_log_default_handler, NULL);
 
     // 2. création de la fenetre principale
     win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
