@@ -32,7 +32,7 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
     // 5. initialisation des éléments complexes
     for(i=0; i<nb_brick_x; i++)
         for(j=0; j<nb_brick_y; j++)
-            pt->brick[i][j] = create_empty_brick();
+            pt->brick[i][j] = create_random_brick();
 
     // 6. retour du pointeur
     return pt;

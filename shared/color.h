@@ -2,19 +2,19 @@
 #define SHARED_COLOR_H
 
 // 0. définition de constantes
-#define MAX_NB_COLOR 10 // nombre maximum de couleurs
+#define MAX_NB_COLOR 5 // nombre maximum de couleurs
 
 // 0.1 paramétrage des couleurs IHM
 #define RED create_color(255, 0, 0)
 #define GREEN create_color(0, 255, 0)
 #define BLUE create_color(0, 0, 255)
 #define YELLOW create_color(255, 255, 0)
-#define ORANGE create_color(255, 165, 0)
-#define PINK create_color(255, 110, 180)
-#define GREY create_color(131, 131, 131)
-#define BROWN create_color(139, 69, 19)
+//#define ORANGE create_color(255, 165, 0)
+#define PINK create_color(255, 0, 255)
+//#define GREY create_color(131, 131, 131)
+//#define BROWN create_color(139, 69, 19)
 #define BLACK create_color(255, 255, 255)
-#define PURPLE create_color(132, 112, 255)
+//#define PURPLE create_color(132, 112, 255)
 
 typedef struct my_color
 {

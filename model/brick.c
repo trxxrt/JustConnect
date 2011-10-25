@@ -21,6 +21,7 @@ t_brick* create_brick (gboolean turnable, gboolean empty, t_stick* stick, int nb
     gtk_container_add (GTK_CONTAINER(pt->button), pt->image);
 
     g_signal_connect(pt->image, "expose-event", G_CALLBACK(on_brick_expose_event), pt);
+    // TODO (jc#1#): à déplacer
     g_signal_connect(pt->button, "clicked", G_CALLBACK(on_brick_click_event), pt);
 
     // 4. infos de debug
