@@ -4,6 +4,7 @@ void display_main_menu ()
 {
     // 0. déclaration des variables
     GtkWidget *button = NULL;
+    GtkWidget *image = NULL;
     GtkWidget *win = NULL;
     GtkWidget *vbox = NULL;
 
@@ -16,8 +17,12 @@ void display_main_menu ()
     g_signal_connect (win, "destroy", gtk_main_quit, NULL);
 
     // 3. création de la vbox
-    vbox = gtk_vbox_new (TRUE, 6);
+    vbox = gtk_vbox_new (FALSE, 6);
     gtk_container_add (GTK_CONTAINER (win), vbox);
+
+    // 4. création de l'image du menu principale
+    image = gtk_image_new_from_file("picture/menu.png");
+    gtk_container_add (GTK_CONTAINER(vbox), image);
 
     // 4. création du bouton du lancement du jeu
     button = gtk_button_new_with_label("Lancer le jeu !");

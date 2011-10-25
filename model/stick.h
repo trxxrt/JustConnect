@@ -10,7 +10,7 @@
 typedef struct struct_stick
 {
     int direction;
-    int color;
+    t_color* color;
     GtkWidget* picture;
 }t_stick;
 
@@ -19,6 +19,6 @@ t_stick* create_stick_table (int nb);
 t_stick* copy_stick_table(t_stick* stick, int nb_stick);
 gboolean are_same_stick_table(t_stick* stick1, int nb1, t_stick* stick2, int nb2);
 t_stick* fusion_sticks_table(t_stick* stick1, int nb1, t_stick* stick2, int nb2);
-void set_stick_informations(int color, int direction, t_stick* stick);
+void set_stick_informations(t_color* color, int direction, t_stick* stick);
 
 #endif

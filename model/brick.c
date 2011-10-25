@@ -1,7 +1,7 @@
 #include "brick.h"
 
 /* fonction de création d'un brick */
-t_brick* create_brick (int turnable, t_stick* stick, int nb_stick)
+t_brick* create_brick (gboolean turnable, gboolean empty, t_stick* stick, int nb_stick)
 {
     // 0. déclaration des variables
     t_brick* pt = NULL;
@@ -15,13 +15,22 @@ t_brick* create_brick (int turnable, t_stick* stick, int nb_stick)
     // 3. affectation des variables
     pt->nb_stick = nb_stick;
     pt->turnable = turnable;
-    pt->image = NULL;
-    // TODO (jc#1#): ajouter la fusion des images à partir de celles des sticks
-    pt->button = NULL;
-    // TODO (jc#1#): créer le bouton avec comme fond l'image de la brick
+    pt->image = gtk_drawing_area_new();
+    gtk_widget_set_size_request(pt->image, 40, 40);
+    pt->button = gtk_button_new();
+    gtk_container_add (GTK_CONTAINER(pt->button), pt->image);
+
+    g_signal_connect(pt->image, "expose-event", G_CALLBACK(on_brick_expose_event), pt);
+    g_signal_connect(pt->button, "clicked", G_CALLBACK(on_brick_click_event), pt);
 
     // 4. infos de debug
-    if(DEBUG) printf("+ création d'une nouvelle brick\n");
+    if(DEBUG)
+    {
+        printf("+  création d'une nouvelle brick ");
+        if(turnable) printf("(tournable, ");
+        else printf("(non-tournable, ");
+        printf("%d direction(s))\n", nb_stick);
+    }
 
     // 5. retour de la variable dynamique
     return pt;
@@ -56,26 +65,42 @@ t_brick* create_random_brick ()
         do { temp_direction = random()%MAX_NB_DIRECTION; } while(is_in_int_table(taken_value, MAX_NB_DIRECTION, temp_direction));
 
         // 4.2 on update les infos du stick
-        set_stick_informations(random()%MAX_NB_COLOR, temp_direction, &(stick[i]));
+        set_stick_informations(create_color_from_id(random()%MAX_NB_COLOR), temp_direction, &(stick[i]));
 
         // 4.3 on rajoute la nouvelle direction dans la liste des valeurs interdites
         taken_value[i] = stick[i].direction;
     }
 
 
-    return create_brick (turnable, stick, nb_stick);
+    return create_brick (turnable, FALSE, stick, nb_stick);
 }
+
+/* création d'une brique vide */
+t_brick* create_empty_brick ()
+{
+    // 1. infos de debug
+    if(DEBUG) printf("+ création d'une brick vide\n");
+
+    // 2. return de la brick vide
+    return create_brick (FALSE, TRUE, NULL, 0);
+}
+
+
 
 /* fonction de suppression d'une brick */
 void delete_brick (t_brick* brick)
 {
-    // 0. suppression des sticks
-    free(brick->stick);
+    // 0. déclaration de la variable locale
+    int i = 0;
 
-    // 1. suppression de la brick
+    // 1. suppression des sticks
+    for(i=0; i<brick->nb_stick; i++)
+        delete_color(brick->stick[i].color);
+
+    // 2. suppression de la brick
     free(brick);
 
-    // 2. print de debug
+    // 3. print de debug
     if(DEBUG) printf("- suppression d'une brick\n");
 }
 
@@ -83,7 +108,7 @@ void delete_brick (t_brick* brick)
 t_brick* copy_brick (t_brick* brick)
 {
     if(DEBUG) printf("<- copie d'une brick\n");
-    return create_brick(brick->turnable, copy_stick_table(brick->stick, brick->nb_stick), brick->nb_stick);
+    return create_brick(brick->turnable, brick->empty, copy_stick_table(brick->stick, brick->nb_stick), brick->nb_stick);
 }
 
 /* fonction de comparaison de 2 brick */
@@ -120,7 +145,7 @@ gboolean are_superposable_bricks (t_brick* brick1, t_brick* brick2)
 gboolean is_turnable_brick (t_brick* brick)
 {
     if(DEBUG) printf("> test de supersposition de 2 bricks\n");
-    if(brick->turnable == 1) return TRUE;
+    if(brick->turnable) return TRUE;
     else return FALSE;
 }
 
@@ -130,7 +155,7 @@ int fusion_bricks (t_brick* brick1, t_brick* brick2, t_brick** destination)
     if(are_superposable_bricks(brick1, brick2))
     {
         if(DEBUG) printf("-> fusion de 2 bricks\n");
-        *destination = create_brick(brick1->turnable, fusion_sticks_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick), brick1->nb_stick + brick2->nb_stick);
+        *destination = create_brick(brick1->turnable, (brick1->empty && brick2->empty), fusion_sticks_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick), brick1->nb_stick + brick2->nb_stick);
         return 1;
     }
     else return 0;
@@ -155,3 +180,63 @@ int turn_brick(t_brick* brick)
     else return 0;
 }
 
+/* fonction d'affichage d'une brick */
+gboolean on_brick_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt)
+{
+    // 0. création des variables temporaires
+    cairo_t *cr;
+    int i = 0;
+    int delta_x = 0;
+    int delta_y = 0;
+    t_brick* brick = (t_brick*)pt;
+    int width = brick->image->allocation.width;
+    int height = brick->image->allocation.height;
+
+    cr = gdk_cairo_create (widget->window);
+
+    cairo_set_line_width(cr, 6);
+
+    for(i=0; i<brick->nb_stick; i++)
+    {
+        cairo_move_to (cr, width/2, height/2);
+        delta_x = 0; delta_y = 0;
+        cairo_set_source_rgb(cr, brick->stick[i].color->r, brick->stick[i].color->g, brick->stick[i].color->b);
+
+        if(brick->stick[i].direction == TOP) delta_y = -height/2;
+        if(brick->stick[i].direction == BOTTOM) delta_y = height/2;
+        if(brick->stick[i].direction == RIGHT) delta_x = width/2;
+        if(brick->stick[i].direction == LEFT) delta_y = -width/2;
+
+        cairo_rel_line_to (cr, delta_x, delta_y);
+        cairo_stroke (cr);
+
+    }
+
+    if(brick->nb_stick)
+    {
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_move_to (cr, width/2, height/2);
+        cairo_rel_line_to (cr, width/5, 0);
+        cairo_stroke (cr);
+        cairo_move_to (cr, width/2, height/2);
+        cairo_rel_line_to (cr, -width/5, 0);
+        cairo_stroke (cr);
+        cairo_move_to (cr, width/2, height/2);
+        cairo_rel_line_to (cr, 0, height/5);
+        cairo_stroke (cr);
+        cairo_move_to (cr, width/2, height/2);
+        cairo_rel_line_to (cr, 0, -height/5);
+        cairo_stroke (cr);
+    }
+
+    cairo_stroke_preserve(cr);
+
+    cairo_destroy(cr);
+
+    return FALSE;
+}
+
+gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt)
+{
+    return FALSE;
+}

@@ -7,7 +7,7 @@
 #include <time.h>
 
 // 1. déclaration des fonctions
-void global_init ();
+void global_init (int argc, char *argv[]);
 
 #endif
 

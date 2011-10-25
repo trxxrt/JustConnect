@@ -5,15 +5,16 @@ t_stick* create_stick_table (int nb)
 {
     // 0. déclaration des variables
     t_stick* pt = NULL;
+    t_color* color = NULL;
     int i = 0;
 
     // 1. création du tableau dynamique
     while(pt == NULL) pt = (t_stick*)malloc(nb*sizeof(t_stick));
+    color = BLACK;
 
     // 2. initialisation de chaque stick du tableau
     for(i=0; i<nb; i++)
     {
-        pt[i].color = 0;
         pt[i].direction = 0;
         pt[i].picture = gtk_image_new_from_file("../picture/background.png");
     }
@@ -38,7 +39,7 @@ t_stick* copy_stick_table(t_stick* stick, int nb_stick)
     // 2. copie des informations dans le nouveau tablau de sticks
     for(i=0; i<nb_stick; i++)
     {
-        pt[i].color = stick[i].color;
+        pt[i].color = copy_color(stick[i].color);
         pt[i].direction = stick[i].direction;
     }
 
@@ -64,7 +65,7 @@ gboolean are_same_stick_table(t_stick* stick1, int nb1, t_stick* stick2, int nb2
         for(i=0; i<nb1; i++)
         {
             // 2. si quelque chose est différent on retourne 0
-            if(stick1[i].color != stick2[i].color) return FALSE;
+            if(!is_same_color(stick1[i].color, stick2[i].color)) return FALSE;
             if(stick2[i].direction != stick2[i].direction) return FALSE;
         }
         // 3. sinon tout est bon
@@ -86,12 +87,12 @@ t_stick* fusion_sticks_table(t_stick* stick1, int nb1, t_stick* stick2, int nb2)
     // 2. fusion
     for(i=0; i<nb1; i++)
     {
-        pt[i].color = stick1[i].color;
+        pt[i].color = copy_color(stick1[i].color);
         pt[i].direction = stick1[i].direction;
     }
     for(i=nb1; i<nb2; i++)
     {
-        pt[i].color = stick2[i-nb1].color;
+        pt[i].color = copy_color(stick2[i-nb1].color);
         pt[i].direction = stick2[i-nb1].direction;
     }
 
@@ -103,7 +104,7 @@ t_stick* fusion_sticks_table(t_stick* stick1, int nb1, t_stick* stick2, int nb2)
 }
 
 /* fonction d'update des infos d'un stick */
-void set_stick_informations(int color, int direction, t_stick* stick)
+void set_stick_informations(t_color* color, int direction, t_stick* stick)
 {
     // 0. déclaration des variables
     char filename[100];
@@ -116,7 +117,7 @@ void set_stick_informations(int color, int direction, t_stick* stick)
     stick->direction = direction;
 
     // 2. création du nom d'image en fonction de la direction et de la couleur
-    sprintf(filename, "%d_%d.png", color, direction);
+    //sprintf(filename, "%d_%d.png", color, direction);
     //stick->picture = gtk_image_new_from_file (filename);
 
     // 3. infos de debug

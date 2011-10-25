@@ -6,6 +6,8 @@
 
 // 1. inclusions des autres .h de constantes
 #include <gtk/gtk.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "color.h"
 #include "direction.h"
 
