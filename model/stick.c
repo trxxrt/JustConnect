@@ -14,13 +14,10 @@ t_stick* create_stick_table (int nb)
 
     // 2. initialisation de chaque stick du tableau
     for(i=0; i<nb; i++)
-    {
         pt[i].direction = 0;
-        pt[i].picture = gtk_image_new_from_file("../picture/background.png");
-    }
 
     // 3.infos de debug
-    if(DEBUG) printf("+ création d'une nouvelle table de stick\n");
+    if(DEBUG) printf("+ création d'une nouvelle table de %d stick(s)\n", nb);
 
     // 4. retour de la valeur
     return pt;
@@ -44,7 +41,7 @@ t_stick* copy_stick_table(t_stick* stick, int nb_stick)
     }
 
     // 3. infos de debug
-    if(DEBUG) printf("+ copie de 2 tableaux de sticks\n");
+    if(DEBUG) printf("+ copie d'un tableau de sticks\n");
 
     // 4. on retourne l'adresse de la nouvelle valeur
     return pt;
@@ -97,29 +94,16 @@ t_stick* fusion_sticks_table(t_stick* stick1, int nb1, t_stick* stick2, int nb2)
     }
 
     // 3. info de debug
-    if(DEBUG) printf("-> fusion de 2 sticks table\n");
+    if(DEBUG) printf("-> fusion de 2 tableaux de sticks\n");
 
     // 4. on retourne la valeur
     return pt;
 }
 
 /* fonction d'update des infos d'un stick */
-void set_stick_informations(t_color* color, int direction, t_stick* stick)
+void set_stick_informations(t_stick* stick, t_color* color, int direction)
 {
-    // 0. déclaration des variables
-    char filename[100];
-    GtkWidget* temp_picture = NULL;
-
-    temp_picture = gtk_image_new_from_file("../picture/background.png");
-
-    // 1. mise à jour des infos du stick
+    // 0. mise à jour des infos du stick
     stick->color = color;
     stick->direction = direction;
-
-    // 2. création du nom d'image en fonction de la direction et de la couleur
-    //sprintf(filename, "%d_%d.png", color, direction);
-    //stick->picture = gtk_image_new_from_file (filename);
-
-    // 3. infos de debug
-    if(DEBUG) printf("+ loading picture to stick : %s\n", filename);
 }

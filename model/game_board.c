@@ -20,6 +20,8 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
     pt->brick = NULL;
     pt->nb_brick_x = nb_brick_x;
     pt->nb_brick_y = nb_brick_y;
+    pt->next_brick = create_random_brick();
+    pt->table = gtk_table_new(nb_brick_x, nb_brick_y,TRUE);
 
     // 4. allocation dynamique des éléments complexes
     while(pt->brick == NULL) pt->brick = (t_brick***)malloc((nb_brick_x)*sizeof(t_brick**));
@@ -32,7 +34,7 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
     // 5. initialisation des éléments complexes
     for(i=0; i<nb_brick_x; i++)
         for(j=0; j<nb_brick_y; j++)
-            pt->brick[i][j] = create_random_brick();
+            pt->brick[i][j] = create_empty_brick();
 
     // 6. retour du pointeur
     return pt;
@@ -65,5 +67,5 @@ void delete_game_board(t_game_board* game)
 
 void destroy_game_board_bricks_from_path(t_game_board* game_board, t_path* path)
 {
-
+// TODO (jc#1#): à coder
 }

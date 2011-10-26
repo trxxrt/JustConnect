@@ -16,6 +16,8 @@ typedef struct struct_game_board
     int score;
     int last_score;
     int best_score;
+    GtkWidget* table;
+    t_brick* next_brick;
     t_brick*** brick;
 }t_game_board;
 

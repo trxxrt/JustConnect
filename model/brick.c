@@ -15,14 +15,9 @@ t_brick* create_brick (gboolean turnable, gboolean empty, t_stick* stick, int nb
     // 3. affectation des variables
     pt->nb_stick = nb_stick;
     pt->turnable = turnable;
+    pt->empty = empty;
     pt->image = gtk_drawing_area_new();
     gtk_widget_set_size_request(pt->image, 40, 40);
-    pt->button = gtk_button_new();
-    gtk_container_add (GTK_CONTAINER(pt->button), pt->image);
-
-    g_signal_connect(pt->image, "expose-event", G_CALLBACK(on_brick_expose_event), pt);
-    // TODO (jc#1#): à déplacer
-    g_signal_connect(pt->button, "clicked", G_CALLBACK(on_brick_click_event), pt);
 
     // 4. infos de debug
     if(DEBUG)
@@ -66,7 +61,7 @@ t_brick* create_random_brick ()
         do { temp_direction = random()%MAX_NB_DIRECTION; } while(is_in_int_table(taken_value, MAX_NB_DIRECTION, temp_direction));
 
         // 4.2 on update les infos du stick
-        set_stick_informations(create_color_from_id(random()%MAX_NB_COLOR), temp_direction, &(stick[i]));
+        set_stick_informations(&(stick[i]), create_color_from_id(random()%MAX_NB_COLOR), temp_direction);
 
         // 4.3 on rajoute la nouvelle direction dans la liste des valeurs interdites
         taken_value[i] = stick[i].direction;
@@ -86,7 +81,13 @@ t_brick* create_empty_brick ()
     return create_brick (FALSE, TRUE, NULL, 0);
 }
 
-
+/* fonction pour savoir si une brique est vide */
+gboolean is_empty_brick(t_brick* brick)
+{
+    if(brick == NULL) return TRUE;
+    if(brick->empty == TRUE) return TRUE;
+    else return FALSE;
+}
 
 /* fonction de suppression d'une brick */
 void delete_brick (t_brick* brick)
@@ -179,65 +180,4 @@ int turn_brick(t_brick* brick)
         return 1;
     }
     else return 0;
-}
-
-/* fonction d'affichage d'une brick */
-gboolean on_brick_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt)
-{
-    // 0. création des variables temporaires
-    cairo_t *cr;
-    int i = 0;
-    int delta_x = 0;
-    int delta_y = 0;
-    t_brick* brick = (t_brick*)pt;
-    int width = brick->image->allocation.width;
-    int height = brick->image->allocation.height;
-
-    cr = gdk_cairo_create (widget->window);
-
-    cairo_set_line_width(cr, 6);
-
-    for(i=0; i<brick->nb_stick; i++)
-    {
-        cairo_move_to (cr, width/2, height/2);
-        delta_x = 0; delta_y = 0;
-        cairo_set_source_rgb(cr, brick->stick[i].color->r, brick->stick[i].color->g, brick->stick[i].color->b);
-
-        if(brick->stick[i].direction == TOP) delta_y = -height/2;
-        if(brick->stick[i].direction == BOTTOM) delta_y = height/2;
-        if(brick->stick[i].direction == RIGHT) delta_x = width/2;
-        if(brick->stick[i].direction == LEFT) delta_y = -width/2;
-
-        cairo_rel_line_to (cr, delta_x, delta_y);
-        cairo_stroke (cr);
-
-    }
-
-    if(brick->nb_stick)
-    {
-        cairo_set_source_rgb(cr, 0, 0, 0);
-        cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, width/5, 0);
-        cairo_stroke (cr);
-        cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, -width/5, 0);
-        cairo_stroke (cr);
-        cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, 0, height/5);
-        cairo_stroke (cr);
-        cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, 0, -height/5);
-        cairo_stroke (cr);
-    }
-
-    cairo_stroke_preserve(cr);
-
-    cairo_destroy(cr);
-
-    return FALSE;
-}
-
-gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt)
-{
-    return FALSE;
 }

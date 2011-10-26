@@ -28,9 +28,9 @@ t_brick* copy_brick (t_brick* brick);
 gboolean are_same_brick (t_brick* brick1, t_brick* brick2);
 gboolean are_superposable_bricks (t_brick* brick1, t_brick* brick2);
 gboolean is_turnable_brick (t_brick* brick);
+gboolean is_empty_brick(t_brick* brick);
 int fusion_bricks (t_brick* brick1, t_brick* brick2, t_brick** destination);
 int turn_brick(t_brick* brick);
-gboolean on_brick_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
-gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
+extern gboolean on_brick_table_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 
 #endif

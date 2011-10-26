@@ -9,5 +9,6 @@
 
 // 1. déclaration des fonctions
 int game (GtkWidget *wid, GtkWidget *win);
+gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 
 #endif
