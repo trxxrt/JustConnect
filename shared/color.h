@@ -2,7 +2,7 @@
 #define SHARED_COLOR_H
 
 // 0. définition de constantes
-#define MAX_NB_COLOR 9 // nombre maximum de couleurs
+#define MAX_NB_COLOR 8 // nombre maximum de couleurs
 
 // 0.1 paramétrage des couleurs IHM
 #define RED create_color(255.0/255.0, 0.0, 0.0)

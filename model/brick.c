@@ -1,7 +1,7 @@
 #include "brick.h"
 
 /* fonction de création d'un brick */
-t_brick* create_brick (gboolean turnable, gboolean empty, t_stick* stick, int nb_stick)
+t_brick* create_brick (gboolean turnable, int type, t_stick* stick, int nb_stick)
 {
     // 0. déclaration des variables
     t_brick* pt = NULL;
@@ -15,9 +15,7 @@ t_brick* create_brick (gboolean turnable, gboolean empty, t_stick* stick, int nb
     // 3. affectation des variables
     pt->nb_stick = nb_stick;
     pt->turnable = turnable;
-    pt->empty = empty;
-    pt->image = gtk_drawing_area_new();
-    gtk_widget_set_size_request(pt->image, 40, 40);
+    pt->type = type;
 
     // 4. infos de debug
     if(DEBUG)
@@ -68,7 +66,7 @@ t_brick* create_random_brick ()
     }
 
 
-    return create_brick (turnable, FALSE, stick, nb_stick);
+    return create_brick (turnable, UNATTACHED_BRICK, stick, nb_stick);
 }
 
 /* création d'une brique vide */
@@ -78,14 +76,14 @@ t_brick* create_empty_brick ()
     if(DEBUG) printf("+ création d'une brick vide\n");
 
     // 2. return de la brick vide
-    return create_brick (FALSE, TRUE, NULL, 0);
+    return create_brick (FALSE, EMPTY_BRICK, NULL, 0);
 }
 
 /* fonction pour savoir si une brique est vide */
 gboolean is_empty_brick(t_brick* brick)
 {
     if(brick == NULL) return TRUE;
-    if(brick->empty == TRUE) return TRUE;
+    if(brick->type == EMPTY_BRICK) return TRUE;
     else return FALSE;
 }
 
@@ -110,14 +108,14 @@ void delete_brick (t_brick* brick)
 t_brick* copy_brick (t_brick* brick)
 {
     if(DEBUG) printf("<- copie d'une brick\n");
-    return create_brick(brick->turnable, brick->empty, copy_stick_table(brick->stick, brick->nb_stick), brick->nb_stick);
+    return create_brick(brick->turnable, brick->type, copy_stick_table(brick->stick, brick->nb_stick), brick->nb_stick);
 }
 
 /* fonction de comparaison de 2 brick */
 gboolean are_same_brick (t_brick* brick1, t_brick* brick2)
 {
     if(DEBUG) printf("> comparaison de 2 bricks\n");
-    if((brick1 == brick2) || (brick1->nb_stick == brick2->nb_stick && brick1->turnable == brick2->turnable && are_same_stick_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick))) return TRUE;
+    if((brick1 == brick2) || (brick1->type == brick2->type && brick1->nb_stick == brick2->nb_stick && brick1->turnable == brick2->turnable && are_same_stick_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick))) return TRUE;
     return FALSE;
 }
 
@@ -146,18 +144,18 @@ gboolean are_superposable_bricks (t_brick* brick1, t_brick* brick2)
 /* fonction pour checker si 1 brick est superposable */
 gboolean is_turnable_brick (t_brick* brick)
 {
-    if(DEBUG) printf("> test de supersposition de 2 bricks\n");
+    if(DEBUG) printf("> rotation de la brick ? : %d\n", brick->turnable);
     if(brick->turnable) return TRUE;
     else return FALSE;
 }
 
 /* fonction pour fusionner 2 bricks si elles sont superposables */
-int fusion_bricks (t_brick* brick1, t_brick* brick2, t_brick** destination)
+int fusion_bricks (t_brick* brick1, t_brick* brick2, t_brick** destination, int new_type)
 {
     if(are_superposable_bricks(brick1, brick2))
     {
         if(DEBUG) printf("-> fusion de 2 bricks\n");
-        *destination = create_brick(FALSE, (brick1->empty && brick2->empty), fusion_sticks_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick), brick1->nb_stick + brick2->nb_stick);
+        *destination = create_brick(FALSE, (new_type), fusion_sticks_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick), brick1->nb_stick + brick2->nb_stick);
         return 1;
     }
     else return 0;
@@ -173,7 +171,7 @@ int turn_brick(t_brick* brick)
     if(is_turnable_brick(brick))
     {
         // 2. print de debug
-        if(DEBUG) printf("= rotation d'une brick");
+        if(DEBUG) printf("= rotation d'une brick\n");
 
         // 3. rotation de la brick
         for(i=0; i<brick->nb_stick; i++) brick->stick[i].direction = (brick->stick[i].direction + 1)%MAX_NB_DIRECTION;

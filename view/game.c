@@ -4,6 +4,7 @@ void display_game (t_game_board* game)
 {
 // 0. déclarion des variables
 GtkWidget* winGame = NULL;
+GtkWidget* table = NULL;
 GtkWidget* table2 = NULL;
 GtkWidget* hbox = NULL;
 GtkWidget* vbox = NULL;
@@ -16,6 +17,7 @@ int j = 0;
 
 // 1.initialisation des variables.
 winGame = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+table = gtk_table_new(game->nb_brick_x, game->nb_brick_y,TRUE);
 table2 = gtk_table_new (21, 21, TRUE);
 vbox = gtk_vbox_new (FALSE, 0);
 frame_best_score = gtk_frame_new(" MEILLEUR SCORE ");
@@ -23,6 +25,9 @@ frame_last_score = gtk_frame_new(" DERNIER SCORE ");
 frame_score = gtk_frame_new(" SCORE ACTUEL ");
 frame_next_brick = gtk_frame_new(" PROCHAINE PIECE ");
 hbox = gtk_hbox_new (FALSE, 0);
+game->best_score.label = gtk_label_new("0");
+game->last_score.label = gtk_label_new("0");
+game->score.label = gtk_label_new("0");
 
 //position des frames dans le tableau de gauche
 gtk_table_attach_defaults(GTK_TABLE(table2), frame_best_score, 1, 5, 1, 5);
@@ -31,8 +36,18 @@ gtk_table_attach_defaults(GTK_TABLE(table2), frame_score, 1, 5, 11, 15);
 gtk_table_attach_defaults(GTK_TABLE(table2), frame_next_brick, 1, 5, 16, 20);
 
 // ajout de la prochaine pièce
+game->next_brick->image = gtk_drawing_area_new();
+gtk_widget_set_size_request(game->next_brick->image, 40, 40);
 gtk_container_add (GTK_CONTAINER(frame_next_brick), game->next_brick->image);
+gtk_widget_add_events(game->next_brick->image, GDK_BUTTON_PRESS_MASK);
+g_signal_connect(game->next_brick->image, "button_press_event", G_CALLBACK(on_next_brick_click_event), game);
 g_signal_connect(game->next_brick->image, "expose-event", G_CALLBACK(on_next_brick_expose_event), game->next_brick);
+
+// ajout des scores
+gtk_container_add (GTK_CONTAINER(frame_best_score), game->best_score.label);
+gtk_container_add (GTK_CONTAINER(frame_last_score), game->last_score.label);
+gtk_container_add (GTK_CONTAINER(frame_score), game->score.label);
+
 
 //position du label dans les frames
 gtk_frame_set_label_align(GTK_FRAME(frame_best_score), 0.5, 0.5);
@@ -44,16 +59,18 @@ gtk_frame_set_label_align(GTK_FRAME(frame_next_brick), 0.5, 0.5);
 for(i = 0; i<game->nb_brick_x; i++)
     for(j = 0; j<game->nb_brick_y; j++)
     {
+        game->brick[i][j]->image = gtk_drawing_area_new();
+        gtk_widget_set_size_request(game->brick[i][j]->image, 40, 40);
         gtk_widget_add_events(game->brick[i][j]->image, GDK_BUTTON_PRESS_MASK);
         g_signal_connect(game->brick[i][j]->image, "button_press_event", G_CALLBACK(on_brick_click_event), game);
         g_signal_connect(game->brick[i][j]->image, "expose-event", G_CALLBACK(on_brick_table_expose_event), game);
-        gtk_table_attach_defaults(GTK_TABLE(game->table), game->brick[i][j]->image, i,i+1,j,j+1);
+        gtk_table_attach_defaults(GTK_TABLE(table), game->brick[i][j]->image, i,i+1,j,j+1);
     }
 
-gtk_table_set_row_spacings(GTK_TABLE(game->table), 0);
-gtk_table_set_col_spacings(GTK_TABLE(game->table), 0);
+gtk_table_set_row_spacings(GTK_TABLE(table), 0);
+gtk_table_set_col_spacings(GTK_TABLE(table), 0);
 
-gtk_table_attach_defaults(GTK_TABLE(table2), game->table, 7, 19, 1, 20);
+gtk_table_attach_defaults(GTK_TABLE(table2), table, 7, 19, 1, 20);
 gtk_box_pack_end (GTK_BOX(hbox), table2, TRUE, TRUE, 0);
 gtk_container_add (GTK_CONTAINER(winGame), hbox);
 gtk_widget_show_all (winGame);
@@ -119,7 +136,7 @@ void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int h
     cairo_fill(cr);
 
     // 1. réglage de lépaisseur du trait
-    cairo_set_line_width(cr, ceil((6.0/40.0)*width));
+    cairo_set_line_width(cr, 6);
 
     // 2. création de la figure à partir des informations des sticks
     for(i=0; i<brick->nb_stick; i++)
@@ -139,7 +156,7 @@ void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int h
     }
 
     // 3. si la brique n'est pas vide, on fait la croix noire du milieu
-    if(!brick->empty)
+    if(brick->type != EMPTY_BRICK)
     {
         cairo_set_source_rgb(cr, 0, 0, 0);
         cairo_move_to (cr, width/2, height/2);
@@ -165,6 +182,19 @@ void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int h
     cairo_rel_line_to (cr, -width, 0);
     cairo_rel_line_to (cr, 0, -height);
     cairo_stroke (cr);
+
+    if(brick->type == UNATTACHED_BRICK && brick->turnable)
+    {
+        cairo_set_line_width(cr, 3);
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_arc(cr, 15, 15, 10, 60.*(M_PI / 180.),  360.*(M_PI / 180.));
+        cairo_stroke(cr);
+        cairo_move_to (cr, 20, 15);
+        cairo_rel_line_to (cr, 10, 0);
+        cairo_rel_line_to (cr, -5, 7);
+        cairo_rel_line_to (cr, -5, -7);
+        cairo_fill (cr);
+    }
 
     cairo_stroke_preserve(cr);
 }

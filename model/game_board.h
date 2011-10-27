@@ -12,10 +12,9 @@ typedef struct struct_game_board
 {
     int nb_brick_x;
     int nb_brick_y;
-    int score;
-    int last_score;
-    int best_score;
-    GtkWidget* table;
+    t_displayed_int score;
+    t_displayed_int last_score;
+    t_displayed_int best_score;
     t_brick* next_brick;
     t_brick*** brick;
 }t_game_board;

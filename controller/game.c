@@ -4,16 +4,8 @@
 int game (GtkWidget *wid, GtkWidget *win)
 {
     t_game_board* game = NULL;
-    t_brick* brick = NULL ;
-    t_stick* stick = NULL;
 
     game = create_game_board_with_default_value();
-    brick = create_random_brick();
-    game->brick[0][0] = brick;
-    stick = create_stick_table(5);
-    //set_stick_informations(RED, TOP, stick);
-    //delete_game_board(game);
-
 
     display_game(game);
     return 0;
@@ -25,7 +17,7 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     // 0 déclaration de variables
     int i = 0, j = 0;
     int x = 0, y = 0;
-    int closed_path = 0;
+    int is_closed_path = 0;
     t_brick* temp_brick = NULL;
     t_game_board* game = (t_game_board*)pt;
     int** tab_test = (int**)malloc(game->nb_brick_x*sizeof(int*));
@@ -47,12 +39,19 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     if(is_empty_brick(game->brick[x][y]))
     {
         if(DEBUG) printf("ajout de la brick sur le plateau\n");
+
+        // 3.1 copie de la nouvelle brick sur le plateau
         temp_brick = copy_brick(game->next_brick);
         temp_brick->image = game->brick[x][y]->image;
         game->brick[x][y] = temp_brick;
+        game->brick[x][y]->type = ATTACHED_BRICK;
+
+        // 3.2 création d'une nouvelle brick dans la pile
         temp_brick = create_random_brick();
         temp_brick->image = game->next_brick->image;
         game->next_brick = temp_brick;
+
+        // 3.3 raffraichssement de l'affichage
         g_signal_connect(game->next_brick->image, "expose-event", G_CALLBACK(on_next_brick_expose_event), game->next_brick);
         on_brick_table_expose_event(game->brick[x][y]->image, NULL, game);
         on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
@@ -63,12 +62,18 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     if(are_superposable_bricks(game->brick[x][y], game->next_brick))
     {
         if(DEBUG) printf("fusion des 2 bricks\n");
-        fusion_bricks(game->brick[x][y], game->next_brick, &temp_brick);
+
+        // 4.1 fusion des 2 bricks
+        fusion_bricks(game->brick[x][y], game->next_brick, &temp_brick, ATTACHED_BRICK);
         temp_brick->image = game->brick[x][y]->image;
         game->brick[x][y] = temp_brick;
+
+        // 4.2 création d'une nouvelle brick
         temp_brick = create_random_brick();
         temp_brick->image = game->next_brick->image;
         game->next_brick = temp_brick;
+
+        // 4.3 raffraichissement de l'affichage
         g_signal_connect(game->next_brick->image, "expose-event", G_CALLBACK(on_next_brick_expose_event), game->next_brick);
         on_brick_table_expose_event(game->brick[x][y]->image, NULL, game);
         on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
@@ -78,20 +83,14 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     // 5. cas n°3 : on recherche à savoir si une boucle est bouclée
     if(DEBUG) printf("recherche de boucle fermée\n");
 
-    closed_path = detect_looped_brick (TRUE, tab_test, game, x, y, 0);
+    is_closed_path = detect_looped_brick (TRUE, tab_test, game, x, y, 0);
 
-    switch(closed_path)
+    if(is_closed_path)
     {
-        case 1:
-            if(DEBUG) printf("boucle fermée\n");
-            destroy_game_board_bricks_from_path(game, tab_test);
-        break;
-
-        case 0:
-        default:
-            if(DEBUG) printf("boucle ouverte\n");
-        break;
+        if(DEBUG) printf("boucle fermée\n");
+        destroy_game_board_bricks_from_path(game, tab_test);
     }
+    else if(DEBUG) printf("boucle ouverte\n");
 
     return FALSE;
 }
@@ -146,4 +145,11 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
         return (bottom_result && top_result && right_result && left_result && reciprocal_result);
     }
     return 0;
+}
+
+gboolean on_next_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt)
+{
+    t_game_board* game = (t_game_board*)pt;
+    if(turn_brick(game->next_brick)) on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
+    return FALSE;
 }

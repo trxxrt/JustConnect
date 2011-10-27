@@ -14,14 +14,16 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
     while(pt == NULL) pt = (t_game_board*)malloc(sizeof(t_game_board));
 
     // 3. initialisation des éléments simples
-    pt->best_score = 0;
-    pt->last_score = 0;
-    pt->score = 0;
+    pt->best_score.value = 0;
+    pt->last_score.value = 0;
+    pt->score.value = 0;
+    pt->best_score.label = NULL;
+    pt->last_score.label = NULL;
+    pt->score.label = NULL;
     pt->brick = NULL;
     pt->nb_brick_x = nb_brick_x;
     pt->nb_brick_y = nb_brick_y;
     pt->next_brick = create_random_brick();
-    pt->table = gtk_table_new(nb_brick_x, nb_brick_y,TRUE);
 
     // 4. allocation dynamique des éléments complexes
     while(pt->brick == NULL) pt->brick = (t_brick***)malloc((nb_brick_x)*sizeof(t_brick**));
@@ -67,9 +69,14 @@ void delete_game_board(t_game_board* game)
 
 void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
 {
+    // 0. création des variables locales
     int i, j;
+    char label[5];
+    int nb_deleted_brick = 0;
+    int score_to_be_added = 0;
     t_brick* temp_brick = NULL;
 
+    // 1. suppression des bricks de la boucle ouverte
     for (i=0; i< pt->nb_brick_x; i++)
     {
         for (j=0; j< pt->nb_brick_y; j++)
@@ -80,8 +87,22 @@ void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
                 temp_brick->image = pt->brick[i][j]->image;
                 pt->brick[i][j] = temp_brick;
                 on_brick_table_expose_event(pt->brick[i][j]->image, NULL, (gpointer)pt);
-                // TODO (jc#1#): ajout support du score
+                nb_deleted_brick++;
             }
         }
     }
+
+    // 2. incrémentation du score
+    score_to_be_added = nb_deleted_brick*nb_deleted_brick;
+    pt->score.value += score_to_be_added;
+    pt->last_score.value = score_to_be_added;
+    if(score_to_be_added > pt->best_score.value) pt->best_score.value = score_to_be_added;
+
+    // 3. raffraichssement de l'affichage
+    sprintf(label, "%d", pt->score.value);
+    gtk_label_set_text(GTK_LABEL(pt->score.label), label);
+    sprintf(label, "%d", pt->best_score.value);
+    gtk_label_set_text(GTK_LABEL(pt->best_score.label), label);
+    sprintf(label, "%d", pt->last_score.value);
+    gtk_label_set_text(GTK_LABEL(pt->last_score.label), label);
 }

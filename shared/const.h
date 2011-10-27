@@ -11,6 +11,12 @@
 #include "color.h"
 #include "direction.h"
 
+typedef struct my_displayed_int
+{
+    int value;
+    GtkWidget* label;
+}t_displayed_int;
+
 // 1. déclaration des fonctions génériques
 gboolean is_in_int_table(int* table, int length, int n);
 
