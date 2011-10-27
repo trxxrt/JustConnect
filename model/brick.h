@@ -15,7 +15,6 @@ typedef struct struct_brick
     int nb_stick;
     gboolean turnable;
     gboolean empty;
-    GtkWidget* button;
     GtkWidget* image;
 }t_brick;
 

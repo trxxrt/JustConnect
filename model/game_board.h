@@ -25,6 +25,6 @@ typedef struct struct_game_board
 t_game_board* create_game_board (int nb_brick_x, int nb_brick_y);
 t_game_board* create_game_board_with_default_value ();
 void delete_game_board(t_game_board* game);
-void destroy_game_board_bricks_from_path(t_game_board* game_board, t_path* path);
+void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test);
 
 #endif

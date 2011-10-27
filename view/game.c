@@ -114,13 +114,12 @@ void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int h
     for(i=0; i<MAX_NB_DIRECTION; i++) directions[i] = 0;
 
     // 1. réinitialisation de la surface
-    cairo_set_source_rgb(cr, 255, 255, 255);
+    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
     cairo_rectangle(cr, 0, 0, (double)width, (double)height);
     cairo_fill(cr);
 
     // 1. réglage de lépaisseur du trait
-    cairo_set_line_width(cr, 6);
-    // TODO (jc#1#): faire du relatif pour l'épaisseur du trait
+    cairo_set_line_width(cr, ceil((6.0/40.0)*width));
 
     // 2. création de la figure à partir des informations des sticks
     for(i=0; i<brick->nb_stick; i++)

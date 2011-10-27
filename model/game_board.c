@@ -65,7 +65,23 @@ void delete_game_board(t_game_board* game)
 }
 
 
-void destroy_game_board_bricks_from_path(t_game_board* game_board, t_path* path)
+void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
 {
-// TODO (jc#1#): à coder
+    int i, j;
+    t_brick* temp_brick = NULL;
+
+    for (i=0; i< pt->nb_brick_x; i++)
+    {
+        for (j=0; j< pt->nb_brick_y; j++)
+        {
+            if (tab_test[i][j] == 1)
+            {
+                temp_brick = create_empty_brick();
+                temp_brick->image = pt->brick[i][j]->image;
+                pt->brick[i][j] = temp_brick;
+                on_brick_table_expose_event(pt->brick[i][j]->image, NULL, (gpointer)pt);
+                // TODO (jc#1#): ajout support du score
+            }
+        }
+    }
 }
