@@ -21,6 +21,8 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
     pt->last_score.label = NULL;
     pt->score.label = NULL;
     pt->brick = NULL;
+    pt->remaining_bricks.label = NULL;
+    pt->remaining_bricks.value = 80;
     pt->nb_brick_x = nb_brick_x;
     pt->nb_brick_y = nb_brick_y;
     pt->next_brick = create_random_brick();

@@ -15,6 +15,7 @@ typedef struct struct_game_board
     t_displayed_int score;
     t_displayed_int last_score;
     t_displayed_int best_score;
+    t_displayed_int remaining_bricks;
     t_brick* next_brick;
     t_brick*** brick;
 }t_game_board;
