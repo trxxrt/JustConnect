@@ -6,7 +6,6 @@
 #include <gtk/gtk.h>
 #include "../shared/const.h"
 #include "brick.h"
-#include "path.h"
 
 // 1. déclaration des structures
 typedef struct struct_game_board
