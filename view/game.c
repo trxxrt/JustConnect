@@ -78,7 +78,7 @@ gboolean on_brick_table_expose_event(GtkWidget *widget, GdkEventExpose *event, g
     cr = gdk_cairo_create (widget->window);
 
     // 3. tracé de la brique
-    draw_cairo_surface_from_brick(cr, game->brick[x][y], game->brick[x][y]->image->allocation.width, game->brick[x][y]->image->allocation.height);
+    draw_cairo_surface_from_brick(cr, game->brick[x][y], (int)game->brick[x][y]->image->allocation.width, (int)game->brick[x][y]->image->allocation.height);
 
     // 4. destruction de la brique
     cairo_destroy(cr);
@@ -110,6 +110,13 @@ void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int h
     // 0. création variables temporaires
     int i = 0;
     int delta_x = 0, delta_y = 0;
+    int directions[MAX_NB_DIRECTION];
+    for(i=0; i<MAX_NB_DIRECTION; i++) directions[i] = 0;
+
+    // 1. réinitialisation de la surface
+    cairo_set_source_rgb(cr, 255, 255, 255);
+    cairo_rectangle(cr, 0, 0, (double)width, (double)height);
+    cairo_fill(cr);
 
     // 1. réglage de lépaisseur du trait
     cairo_set_line_width(cr, 6);
@@ -125,7 +132,8 @@ void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int h
         if(brick->stick[i].direction == TOP) delta_y = -height/2;
         if(brick->stick[i].direction == BOTTOM) delta_y = height/2;
         if(brick->stick[i].direction == RIGHT) delta_x = width/2;
-        if(brick->stick[i].direction == LEFT) delta_y = -width/2;
+        if(brick->stick[i].direction == LEFT) delta_x = -width/2;
+        directions[brick->stick[i].direction] = 1;
 
         cairo_rel_line_to (cr, delta_x, delta_y);
         cairo_stroke (cr);
@@ -136,16 +144,16 @@ void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int h
     {
         cairo_set_source_rgb(cr, 0, 0, 0);
         cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, width/5, 0);
+        if(directions[RIGHT]) cairo_rel_line_to (cr, width/5, 0);
         cairo_stroke (cr);
         cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, -width/5, 0);
+        if(directions[LEFT]) cairo_rel_line_to (cr, -width/5, 0);
         cairo_stroke (cr);
         cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, 0, height/5);
+        if(directions[BOTTOM]) cairo_rel_line_to (cr, 0, height/5);
         cairo_stroke (cr);
         cairo_move_to (cr, width/2, height/2);
-        cairo_rel_line_to (cr, 0, -height/5);
+        if(directions[TOP]) cairo_rel_line_to (cr, 0, -height/5);
         cairo_stroke (cr);
     }
 

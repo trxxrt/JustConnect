@@ -5,12 +5,10 @@ t_stick* create_stick_table (int nb)
 {
     // 0. déclaration des variables
     t_stick* pt = NULL;
-    t_color* color = NULL;
     int i = 0;
 
     // 1. création du tableau dynamique
     while(pt == NULL) pt = (t_stick*)malloc(nb*sizeof(t_stick));
-    color = BLACK;
 
     // 2. initialisation de chaque stick du tableau
     for(i=0; i<nb; i++)
@@ -87,7 +85,7 @@ t_stick* fusion_sticks_table(t_stick* stick1, int nb1, t_stick* stick2, int nb2)
         pt[i].color = copy_color(stick1[i].color);
         pt[i].direction = stick1[i].direction;
     }
-    for(i=nb1; i<nb2; i++)
+    for(i=nb1; i<nb2+nb1; i++)
     {
         pt[i].color = copy_color(stick2[i-nb1].color);
         pt[i].direction = stick2[i-nb1].direction;

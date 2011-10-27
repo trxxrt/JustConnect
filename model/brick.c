@@ -157,7 +157,7 @@ int fusion_bricks (t_brick* brick1, t_brick* brick2, t_brick** destination)
     if(are_superposable_bricks(brick1, brick2))
     {
         if(DEBUG) printf("-> fusion de 2 bricks\n");
-        *destination = create_brick(brick1->turnable, (brick1->empty && brick2->empty), fusion_sticks_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick), brick1->nb_stick + brick2->nb_stick);
+        *destination = create_brick(FALSE, (brick1->empty && brick2->empty), fusion_sticks_table(brick1->stick, brick1->nb_stick, brick2->stick, brick2->nb_stick), brick1->nb_stick + brick2->nb_stick);
         return 1;
     }
     else return 0;

@@ -9,6 +9,7 @@
 #define GREEN create_color(0, 255, 0)
 #define BLUE create_color(0, 0, 255)
 #define YELLOW create_color(255, 255, 0)
+#define WHITE create_color(255, 255, 255)
 //#define ORANGE create_color(255, 165, 0)
 #define PINK create_color(255, 0, 255)
 //#define GREY create_color(131, 131, 131)
