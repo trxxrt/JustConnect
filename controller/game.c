@@ -99,9 +99,9 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
 
 int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent)
 {
-    int k;
-    int temp_return = 1;
-    int res1 = 1, res2 = 1, res3 = 1, res4 = 1;
+    int i;
+    int reciprocal_result = 1;
+    int bottom_result = 1, top_result = 1, right_result = 1, left_result = 1;
 
     tab_test[pos_x][pos_y] = 1;
 
@@ -109,33 +109,33 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
     {
         if(!init)
         {
-            temp_return = 0;
-            for(k=0; k <pt->brick[pos_x][pos_y]->nb_stick; k++)
-                if(pt->brick[pos_x][pos_y]->stick[k].direction == direction_of_parent) temp_return = 1;
+            reciprocal_result = 0;
+            for(i=0; i <pt->brick[pos_x][pos_y]->nb_stick; i++)
+                if(pt->brick[pos_x][pos_y]->stick[i].direction == direction_of_parent) reciprocal_result = 1;
         }
 
-        for(k=0; k <pt->brick[pos_x][pos_y]->nb_stick; k++)
+        for(i=0; i <pt->brick[pos_x][pos_y]->nb_stick; i++)
         {
-            switch(pt->brick[pos_x][pos_y]->stick[k].direction)
+            switch(pt->brick[pos_x][pos_y]->stick[i].direction)
             {
                 case BOTTOM:
-                    if (pos_y < pt->nb_brick_y-1) { if(tab_test[pos_x][pos_y+1] == 0) res1 = detect_looped_brick (FALSE, tab_test, pt, pos_x, pos_y+1, TOP); }
-                    else if ( pos_y == pt->nb_brick_y-1) if(tab_test[pos_x][0] == 0) res1 = detect_looped_brick (FALSE, tab_test, pt, pos_x, 0, TOP );
+                    if (pos_y < pt->nb_brick_y-1) { if(tab_test[pos_x][pos_y+1] == 0) bottom_result = detect_looped_brick (FALSE, tab_test, pt, pos_x, pos_y+1, TOP); }
+                    else if ( pos_y == pt->nb_brick_y-1) if(tab_test[pos_x][0] == 0) bottom_result = detect_looped_brick (FALSE, tab_test, pt, pos_x, 0, TOP );
                 break;
 
                 case TOP:
-                    if (pos_y > 0) { if(tab_test[pos_x][pos_y-1] == 0) res2 = detect_looped_brick (FALSE, tab_test, pt, pos_x, pos_y-1, BOTTOM ); }
-                    else if ( pos_y == 0 ) if(tab_test[pos_x][pt->nb_brick_y-1] == 0) res1 = detect_looped_brick (FALSE, tab_test, pt, pos_x, pt->nb_brick_y - 1, BOTTOM);
+                    if (pos_y > 0) { if(tab_test[pos_x][pos_y-1] == 0) top_result = detect_looped_brick (FALSE, tab_test, pt, pos_x, pos_y-1, BOTTOM ); }
+                    else if ( pos_y == 0 ) if(tab_test[pos_x][pt->nb_brick_y-1] == 0) bottom_result = detect_looped_brick (FALSE, tab_test, pt, pos_x, pt->nb_brick_y - 1, BOTTOM);
                 break;
 
                 case RIGHT:
-                    if (pos_x < pt->nb_brick_x - 1) { if(tab_test[pos_x+1][pos_y] == 0) res3 = detect_looped_brick (FALSE, tab_test, pt, pos_x+1, pos_y, LEFT ); }
-                    else if ( pos_x == pt->nb_brick_x - 1) if(tab_test[0][pos_y] == 0) res1 = detect_looped_brick (FALSE, tab_test, pt, 0, pos_y, LEFT );
+                    if (pos_x < pt->nb_brick_x - 1) { if(tab_test[pos_x+1][pos_y] == 0) right_result = detect_looped_brick (FALSE, tab_test, pt, pos_x+1, pos_y, LEFT ); }
+                    else if ( pos_x == pt->nb_brick_x - 1) if(tab_test[0][pos_y] == 0) bottom_result = detect_looped_brick (FALSE, tab_test, pt, 0, pos_y, LEFT );
                 break;
 
                 case LEFT:
-                    if (pos_x > 0) { if(tab_test[pos_x-1][pos_y] == 0) res4 = detect_looped_brick (FALSE, tab_test, pt, pos_x-1, pos_y, RIGHT ); }
-                    else if ( pos_x == 0) if(tab_test[pt->nb_brick_x-1][pos_y] == 0) res4 = detect_looped_brick (FALSE, tab_test, pt, pt->nb_brick_x-1, pos_y, RIGHT );
+                    if (pos_x > 0) { if(tab_test[pos_x-1][pos_y] == 0) left_result = detect_looped_brick (FALSE, tab_test, pt, pos_x-1, pos_y, RIGHT ); }
+                    else if ( pos_x == 0) if(tab_test[pt->nb_brick_x-1][pos_y] == 0) left_result = detect_looped_brick (FALSE, tab_test, pt, pt->nb_brick_x-1, pos_y, RIGHT );
                 break;
 
                 default:
@@ -143,7 +143,7 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
                 break;
             }
         }
-        return (res1 && res2 && res3 && res4 && temp_return);
+        return (bottom_result && top_result && right_result && left_result && reciprocal_result);
     }
     return 0;
 }
