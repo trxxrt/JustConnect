@@ -6,6 +6,6 @@
 #include <gtk/gtk.h>
 
 // 1. déclaration des fonctions
-void display_options(GtkWidget *wid, GtkWidget *win);
+void display_options(GtkWidget *win);
 
 #endif

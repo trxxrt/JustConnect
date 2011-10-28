@@ -5,13 +5,19 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "../model/game_board.h"
+#include "../controller/options.h"
+
+#define WHITE_BACKGROUND 0
+#define GREEN_BACKGROUND 1
+#define RED_BACKGROUND 2
 
 // 1. déclaration des fonctions
 void display_game (t_game_board* game);
 extern gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 extern gboolean on_next_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
+extern int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent);
 gboolean on_brick_table_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 gboolean on_next_brick_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
-void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int height);
+void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int height, int background_color);
 
 #endif

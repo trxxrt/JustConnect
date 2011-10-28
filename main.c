@@ -3,6 +3,6 @@
 int main (int argc, char *argv[])
 {
     global_init(argc, argv);
-    main_menu();
+    game();
     return 0;
 }

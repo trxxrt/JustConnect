@@ -1,6 +1,6 @@
 #include "options.h"
 
-void display_options (GtkWidget *wid, GtkWidget *win)
+void display_options (GtkWidget *win)
 {
     // 0. déclarion des variables
     GtkWidget *dialog = NULL;

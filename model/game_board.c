@@ -1,7 +1,7 @@
 #include "game_board.h"
 
 /* création du plateau de jeu avec des valeurs fixées */
-t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
+t_game_board* create_game_board (int nb_brick_x, int nb_brick_y, int rules)
 {
     // 0. déclaration des variables
     t_game_board* pt = NULL;
@@ -14,6 +14,7 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
     while(pt == NULL) pt = (t_game_board*)malloc(sizeof(t_game_board));
 
     // 3. initialisation des éléments simples
+    pt->rules = rules;
     pt->best_score.value = 0;
     pt->last_score.value = 0;
     pt->score.value = 0;
@@ -27,7 +28,10 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
     pt->nb_brick_y = nb_brick_y;
     pt->next_brick = create_random_brick();
 
-    // 4. allocation dynamique des éléments complexes
+    // 4. réglage de l'aide des fonds colorés pour la gui
+    if(rules == SOLO_GAME_EASY || rules == SOLO_GAME_MEDIUM) pt->gui_color_help =  TRUE;
+
+    // 5. allocation dynamique des éléments complexes
     while(pt->brick == NULL) pt->brick = (t_brick***)malloc((nb_brick_x)*sizeof(t_brick**));
     for(i=0; i<nb_brick_x; i++) pt->brick[i] = NULL;
     for(i=0; i<nb_brick_x; i++) {
@@ -35,19 +39,19 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y)
             pt->brick[i] = (t_brick**)malloc((nb_brick_y)*sizeof(t_brick*));
     }
 
-    // 5. initialisation des éléments complexes
+    // 6. initialisation des éléments complexes
     for(i=0; i<nb_brick_x; i++)
         for(j=0; j<nb_brick_y; j++)
             pt->brick[i][j] = create_empty_brick();
 
-    // 6. retour du pointeur
+    // 7. retour du pointeur
     return pt;
 }
 
 /* création du plateau de jeu avec des valeurs par défault */
 t_game_board* create_game_board_with_default_value ()
 {
-    return create_game_board (10, 10);
+    return create_game_board (10, 10, SOLO_GAME_EASY);
 }
 
 /* suppression du plateau de jeu */
@@ -73,7 +77,6 @@ void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
 {
     // 0. création des variables locales
     int i, j;
-    char label[5];
     int nb_deleted_brick = 0;
     int score_to_be_added = 0;
     t_brick* temp_brick = NULL;
@@ -96,15 +99,12 @@ void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
 
     // 2. incrémentation du score
     score_to_be_added = nb_deleted_brick*nb_deleted_brick;
-    pt->score.value += score_to_be_added;
-    pt->last_score.value = score_to_be_added;
-    if(score_to_be_added > pt->best_score.value) pt->best_score.value = score_to_be_added;
 
-    // 3. raffraichssement de l'affichage
-    sprintf(label, "%d", pt->score.value);
-    gtk_label_set_text(GTK_LABEL(pt->score.label), label);
-    sprintf(label, "%d", pt->best_score.value);
-    gtk_label_set_text(GTK_LABEL(pt->best_score.label), label);
-    sprintf(label, "%d", pt->last_score.value);
-    gtk_label_set_text(GTK_LABEL(pt->last_score.label), label);
+    edit_displayed_int_value(&pt->score, pt->score.value+score_to_be_added);
+    edit_displayed_int_value(&pt->last_score, score_to_be_added);
+    edit_displayed_int_value(&pt->remaining_bricks, pt->remaining_bricks.value + nb_deleted_brick/2);
+    if(score_to_be_added > pt->best_score.value) edit_displayed_int_value(&pt->best_score, score_to_be_added);
+
+    // 3. debug
+    if(DEBUG) printf("! score obtenu : %d\n+ ajout de %d bricks dans la pioche\n", score_to_be_added, nb_deleted_brick/2);
 }

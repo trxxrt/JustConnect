@@ -4,7 +4,7 @@
 // 0. inclusion des librairies
 #include <stdlib.h>
 #include "controller/init.h"
-#include "controller/main_menu.h"
+#include "controller/game.h"
 
 // 1. déclaration des fonctions
 int main (int argc, char *argv[]);

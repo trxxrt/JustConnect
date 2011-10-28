@@ -1,7 +1,7 @@
 #include "options.h"
 
-int options (GtkWidget *wid, GtkWidget *win)
+int options (GtkWidget *win)
 {
-    display_options(wid, win);
+    display_options(win);
     return 0;
 }

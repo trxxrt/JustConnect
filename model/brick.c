@@ -43,10 +43,10 @@ t_brick* create_random_brick ()
     for(i=0; i<MAX_NB_DIRECTION; i++) taken_value[i] = -1;
 
     // 1. génération aléatoire de turnable : 0 ou 1
-    turnable = random()%2;
+    turnable = rand()%2;
 
     // 2. génération aléatoire du nb de sticks
-    nb_stick = (random()%MAX_NB_DIRECTION)+1;
+    nb_stick = (rand()%MAX_NB_DIRECTION)+1;
 
     // 3. infos de debug
     if(DEBUG) printf("+ création d'une brick aléatoire\n");
@@ -56,10 +56,10 @@ t_brick* create_random_brick ()
     for(i=0; i<nb_stick; i++)
     {
         // 4.1 génération de la direction (on vérifie qu'elle n'a pas déjà été prise)
-        do { temp_direction = random()%MAX_NB_DIRECTION; } while(is_in_int_table(taken_value, MAX_NB_DIRECTION, temp_direction));
+        do { temp_direction = rand()%MAX_NB_DIRECTION; } while(is_in_int_table(taken_value, MAX_NB_DIRECTION, temp_direction));
 
         // 4.2 on update les infos du stick
-        set_stick_informations(&(stick[i]), create_color_from_id(random()%MAX_NB_COLOR), temp_direction);
+        set_stick_informations(&(stick[i]), create_color_from_id(rand()%MAX_NB_COLOR), temp_direction);
 
         // 4.3 on rajoute la nouvelle direction dans la liste des valeurs interdites
         taken_value[i] = stick[i].direction;

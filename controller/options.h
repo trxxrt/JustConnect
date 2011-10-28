@@ -7,6 +7,6 @@
 #include "../view/options.h"
 
 // 1. déclaration des fonctions
-int options(GtkWidget *wid, GtkWidget *win);
+int options(GtkWidget *win);
 
 #endif
