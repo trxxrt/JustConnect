@@ -181,7 +181,7 @@ void update_display_game_to_new(t_game_board* old_game, t_game_board* new_game)
     edit_displayed_int_value(&new_game->best_score, 0);
     edit_displayed_int_value(&new_game->score, 0);
     edit_displayed_int_value(&new_game->last_score, 0);
-    edit_displayed_int_value(&new_game->remaining_bricks, 0);
+    edit_displayed_int_value(&new_game->remaining_bricks, 80);
 
     // 3. reconnexion des signaux avec les nouveaux objets
     gtk_signal_disconnect_by_data(GTK_OBJECT(old_game->next_brick->image), old_game);
