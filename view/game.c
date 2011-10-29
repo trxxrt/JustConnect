@@ -21,6 +21,7 @@ GtkWidget* menu_bar = NULL;
 GtkWidget* menu_file = NULL;
 GtkWidget* new_game_item = NULL;
 GtkWidget* option_item = NULL;
+GtkWidget* best_scores_item = NULL;
 GtkWidget* quit_item = NULL;
 GtkWidget* file_item = NULL;
 GtkWidget* menu_help = NULL;
@@ -44,6 +45,7 @@ g_signal_connect (winGame, "destroy", gtk_main_quit, NULL);
     // 1.2 initialisation des tables
 right_table = gtk_table_new(game->nb_brick_x, game->nb_brick_y,TRUE);
 left_table = gtk_table_new (21, 21, TRUE);
+game->table = right_table;
 
     // 1.3 initialisation des box
 vbox = gtk_vbox_new (FALSE, 0);
@@ -68,17 +70,20 @@ menu_file = gtk_menu_new ();
 menu_help = gtk_menu_new ();
 new_game_item = gtk_menu_item_new_with_label ("Nouvelle Partie");
 option_item = gtk_menu_item_new_with_label ("Option");
+best_scores_item = gtk_menu_item_new_with_label ("Meilleurs scores");
 quit_item = gtk_menu_item_new_with_label ("Quitter");
 rules_item = gtk_menu_item_new_with_label ("Règles du jeu");
 credit_item = gtk_menu_item_new_with_label ("Crédits");
 file_item = gtk_menu_item_new_with_label ("Fichier");
 help_item = gtk_menu_item_new_with_label ("Aide");
+game->new_game_menu = new_game_item;
 
 // 2. paramétrage de la menu_bar
 
     // 2.1 on associe les items d'un menu au menu concerné
 gtk_menu_append (GTK_MENU (menu_file), new_game_item);
 gtk_menu_append (GTK_MENU (menu_file), option_item);
+gtk_menu_append (GTK_MENU (menu_file), best_scores_item);
 gtk_menu_append (GTK_MENU (menu_file), quit_item);
 gtk_menu_append (GTK_MENU (menu_help), rules_item);
 gtk_menu_append (GTK_MENU (menu_help), credit_item);
@@ -88,14 +93,14 @@ gtk_menu_bar_append (GTK_MENU_BAR (menu_bar), help_item);
     // 2.2 on intègre la barre de menu à la vbox
 gtk_box_pack_start (GTK_BOX(vbox), menu_bar, TRUE, TRUE, 0);
 
-//on associe à la barre de menu principale ses items. (fichier, edit, help).
-gtk_menu_item_set_submenu (GTK_MENU_ITEM (file_item), menu_file);///association de l'item fichier et du menu fichier.
-gtk_menu_item_set_submenu (GTK_MENU_ITEM (help_item), menu_help);///association de l'item fichier et du menu fichier.
+    // 2.3 association des items à la barre de menu principale (fichier, edit, help).
+gtk_menu_item_set_submenu (GTK_MENU_ITEM (file_item), menu_file);
+gtk_menu_item_set_submenu (GTK_MENU_ITEM (help_item), menu_help);
 
-//liste des évenements
-
-gtk_signal_connect_object (GTK_OBJECT (new_game_item), "activate", GTK_SIGNAL_FUNC (game), " ");
+    // 2.4 ajout des évenements
+gtk_signal_connect_object (GTK_OBJECT (new_game_item), "activate", GTK_SIGNAL_FUNC (display_launcher_pop_up), game);
 gtk_signal_connect_object (GTK_OBJECT (option_item), "activate", GTK_SIGNAL_FUNC (options), winGame);
+gtk_signal_connect_object (GTK_OBJECT (best_scores_item), "activate", GTK_SIGNAL_FUNC (display_best_score), winGame);
 gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate", GTK_SIGNAL_FUNC (gtk_main_quit), " ");
 //gtk_signal_connect_object (GTK_OBJECT (help_items), "activate", GTK_SIGNAL_FUNC (détruire), " "); -> pour help_item
 //gtk_signal_connect_object (GTK_OBJECT (credit_items), "activate", GTK_SIGNAL_FUNC (détruire), " "); -> pour credit_item
@@ -109,7 +114,7 @@ gtk_table_attach_defaults(GTK_TABLE(left_table), frame_next_brick, 1, 5, 17, 20)
 
 // ajout de la prochaine pièce
 game->next_brick->image = gtk_drawing_area_new();
-gtk_widget_set_size_request(game->next_brick->image, 40, 40);
+gtk_widget_set_size_request(game->next_brick->image, GAME_DEFAULT_SIZE_OF_BRICK, GAME_DEFAULT_SIZE_OF_BRICK);
 gtk_container_add (GTK_CONTAINER(frame_next_brick), game->next_brick->image);
 gtk_widget_add_events(game->next_brick->image, GDK_BUTTON_PRESS_MASK);
 g_signal_connect(game->next_brick->image, "button_press_event", G_CALLBACK(on_next_brick_click_event), game);
@@ -132,7 +137,7 @@ for(i = 0; i<game->nb_brick_x; i++)
     for(j = 0; j<game->nb_brick_y; j++)
     {
         game->brick[i][j]->image = gtk_drawing_area_new();
-        gtk_widget_set_size_request(game->brick[i][j]->image, 40, 40);
+        gtk_widget_set_size_request(game->brick[i][j]->image, GAME_DEFAULT_SIZE_OF_BRICK, GAME_DEFAULT_SIZE_OF_BRICK);
         gtk_widget_add_events(game->brick[i][j]->image, GDK_BUTTON_PRESS_MASK);
         g_signal_connect(game->brick[i][j]->image, "button_press_event", G_CALLBACK(on_brick_click_event), game);
         g_signal_connect(game->brick[i][j]->image, "expose-event", G_CALLBACK(on_brick_table_expose_event), game);
@@ -149,6 +154,48 @@ gtk_container_add (GTK_CONTAINER(winGame), vbox);
 gtk_widget_show_all (winGame);
 gtk_main ();
 
+}
+
+void update_display_game_to_new(t_game_board* old_game, t_game_board* new_game)
+{
+    int i, j;
+
+    new_game->new_game_menu = old_game->new_game_menu;
+    new_game->best_score.label = old_game->best_score.label;
+    new_game->last_score.label = old_game->last_score.label;
+    new_game->score.label = old_game->score.label;
+    new_game->remaining_bricks.label = old_game->remaining_bricks.label;
+    new_game->next_brick->image = old_game->next_brick->image;
+    on_next_brick_expose_event(new_game->next_brick->image, NULL, new_game->next_brick);
+    edit_displayed_int_value(&new_game->best_score, 0);
+    edit_displayed_int_value(&new_game->score, 0);
+    edit_displayed_int_value(&new_game->last_score, 0);
+    edit_displayed_int_value(&new_game->remaining_bricks, 0);
+
+    gtk_signal_disconnect_by_data(GTK_OBJECT (old_game->new_game_menu), old_game);
+    gtk_signal_connect_object (GTK_OBJECT (new_game->new_game_menu), "activate", GTK_SIGNAL_FUNC (display_launcher_pop_up), new_game);
+
+    for(i=0; i<old_game->nb_brick_x; i++)
+        for(j=0; j<old_game->nb_brick_y; j++)
+            gtk_container_remove(GTK_CONTAINER(old_game->table), old_game->brick[i][j]->image);
+
+    gtk_table_resize(GTK_TABLE(old_game->table), new_game->nb_brick_x, new_game->nb_brick_y);
+
+    new_game->table = old_game->table;
+
+    for(i=0; i<new_game->nb_brick_x; i++)
+    {
+        for(j=0; j<new_game->nb_brick_y; j++)
+        {
+            new_game->brick[i][j]->image = gtk_drawing_area_new();
+            gtk_widget_set_size_request(new_game->brick[i][j]->image, GAME_DEFAULT_SIZE_OF_BRICK, GAME_DEFAULT_SIZE_OF_BRICK);
+            gtk_widget_add_events(new_game->brick[i][j]->image, GDK_BUTTON_PRESS_MASK);
+            g_signal_connect(new_game->brick[i][j]->image, "button_press_event", G_CALLBACK(on_brick_click_event), new_game);
+            g_signal_connect(new_game->brick[i][j]->image, "expose-event", G_CALLBACK(on_brick_table_expose_event), new_game);
+            gtk_table_attach_defaults(GTK_TABLE(new_game->table), new_game->brick[i][j]->image, i,i+1,j,j+1);
+        }
+    }
+    gtk_widget_show_all(new_game->table);
 }
 
 

@@ -1,8 +1,9 @@
-#include "main_menu.h"
+#include "game_launcher.h"
 
-void display_main_menu ()
+void display_launcher_pop_up (gpointer pt)
 {
-    // 0. déclaration des variables
+    t_game_board* game = (t_game_board*)pt;
+    /*// 0. déclaration des variables
     GtkWidget *button = NULL;
     GtkWidget *image = NULL;
     GtkWidget *win = NULL;
@@ -41,5 +42,7 @@ void display_main_menu ()
 
     // 7. lancement de la main-windows
     gtk_widget_show_all (win);
-    gtk_main ();
+    gtk_main ();*/
+
+    new_game(game);
 }

@@ -14,6 +14,8 @@
 
 #define VERSUS_GAME 10
 
+#define GAME_DEFAULT_SIZE_OF_BRICK 40
+
 // 1. déclaration des structures
 typedef struct struct_game_board
 {
@@ -25,6 +27,8 @@ typedef struct struct_game_board
     t_displayed_int last_score;
     t_displayed_int best_score;
     t_displayed_int remaining_bricks;
+    GtkWidget* table;
+    GtkWidget* new_game_menu;
     t_brick* next_brick;
     t_brick*** brick;
 }t_game_board;

@@ -8,6 +8,6 @@
 #include "../controller/options.h"
 
 // 1. déclaration des fonctions
-void display_main_menu();
+void display_launcher_pop_up (gpointer pt);
 
 #endif

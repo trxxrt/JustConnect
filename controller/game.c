@@ -1,13 +1,23 @@
 #include "game.h"
 
 /* fonction de lancement du jeu */
-int game ()
+int game()
 {
     t_game_board* game = NULL;
 
     game = create_game_board_with_default_value();
 
     display_game(game);
+    return 0;
+}
+
+int new_game(t_game_board* old_game)
+{
+    t_game_board* new_game = NULL;
+
+    new_game = create_game_board_with_default_value();
+
+    update_display_game_to_new(old_game, new_game);
     return 0;
 }
 
