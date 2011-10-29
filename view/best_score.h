@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "../shared/const.h"
+#include <string.h>
 
 #define MAX_PSEUDO_LENGTH 50
 
@@ -26,7 +27,7 @@ void display_best_score(GtkWidget* win);
 t_best_score* load_best_scores();
 void save_best_scores(t_best_score* list);
 gboolean is_a_best_score(t_best_score* list, int score);
-void insert_in_best_score(t_best_score* list, int score, char* pseudo);
+t_best_score* insert_in_best_score(t_best_score* list, int score, char* pseudo);
 
 #endif
 

@@ -17,3 +17,8 @@ void edit_displayed_int_value(t_displayed_int* pt, int value)
     sprintf(buffer, "%d", value);
     gtk_label_set_text(GTK_LABEL(pt->label), buffer);
 }
+
+void gtk_widget_destroy_from_callback(GtkWidget* win, GtkWidget* wid)
+{
+    gtk_widget_destroy(wid);
+}
