@@ -8,6 +8,7 @@ void display_game (t_game_board* game)
 GtkWidget* winGame = NULL;
 GtkWidget* right_table = NULL;
 GtkWidget* left_table = NULL;
+GtkWidget* scrolled_window = NULL;
 GtkWidget* hbox = NULL;
 GtkWidget* vbox = NULL;
 GtkWidget* frame_best_score = NULL;
@@ -48,24 +49,27 @@ right_table = gtk_table_new(game->nb_brick_x, game->nb_brick_y,TRUE);
 left_table = gtk_table_new (21, 21, TRUE);
 game->table = right_table;
 
-    // 1.3 initialisation des box
+    // 1.3 initialisation de la scrolled window
+scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+
+    // 1.4 initialisation des box
 vbox = gtk_vbox_new (FALSE, 0);
 hbox = gtk_hbox_new (FALSE, 0);
 
-    // 1.4 initialisation des frames
+    // 1.5 initialisation des frames
 frame_best_score = gtk_frame_new(" MEILLEUR SCORE ");
 frame_last_score = gtk_frame_new(" DERNIER SCORE ");
 frame_score = gtk_frame_new(" SCORE ACTUEL ");
 frame_next_brick = gtk_frame_new(" PROCHAINE PIECE ");
 frame_remaining_brick = gtk_frame_new(" PIECES RESTANTES ");
 
-    // 1.5 initialisation des labels
+    // 1.6 initialisation des labels
 game->best_score.label = gtk_label_new("0");
 game->last_score.label = gtk_label_new("0");
 game->score.label = gtk_label_new("0");
 game->remaining_bricks.label = gtk_label_new("80");
 
-    // 1.6 initialisation du menu fichier.
+    // 1.7 initialisation du menu fichier.
 menu_bar = gtk_menu_bar_new ();
 menu_file = gtk_menu_new ();
 menu_help = gtk_menu_new ();
@@ -148,7 +152,8 @@ for(i = 0; i<game->nb_brick_x; i++)
 gtk_table_set_row_spacings(GTK_TABLE(right_table), 0);
 gtk_table_set_col_spacings(GTK_TABLE(right_table), 0);
 
-gtk_table_attach_defaults(GTK_TABLE(left_table), right_table, 7, 19, 1, 20);
+gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW(scrolled_window), right_table);
+gtk_table_attach_defaults(GTK_TABLE(left_table), scrolled_window, 7, 19, 1, 20);
 gtk_box_pack_end (GTK_BOX(hbox), left_table, TRUE, TRUE, 0);
 gtk_box_pack_end (GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 gtk_container_add (GTK_CONTAINER(winGame), vbox);

@@ -54,7 +54,7 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y, int rules)
 /* création du plateau de jeu avec des valeurs par défault */
 t_game_board* create_game_board_with_default_value ()
 {
-    return create_game_board (10, 10, SOLO_GAME_EASY);
+    return create_game_board (9, 9, SOLO_GAME_EASY);
 }
 
 /* suppression du plateau de jeu */
