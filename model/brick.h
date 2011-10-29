@@ -36,5 +36,6 @@ gboolean is_empty_brick(t_brick* brick);
 int fusion_bricks (t_brick* brick1, t_brick* brick2, t_brick** destination, int new_type);
 int turn_brick(t_brick* brick);
 extern gboolean on_brick_table_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
+extern gboolean on_next_brick_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 
 #endif

@@ -25,7 +25,7 @@ int new_game(t_game_board* old_game, int rules, int size_x, int size_y)
 gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt)
 {
     // 0 déclaration de variables et initialisations
-    int i = 0, j = 0;
+    int i = 0, j = 0, k = 0, l = 0;
     int x = 0, y = 0;
     int is_closed_path = 0;
     t_brick* temp_brick = NULL;
@@ -45,9 +45,12 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     if(DEBUG) printf("click sur la brick (%d, %d) : ", x, y);
 
     // 3. cas n°1 : la brique est vide
-    if(is_empty_brick(game->brick[x][y]))
+    if(is_empty_brick(game->brick[x][y]) && game->remaining_bricks.value > 0)
     {
         if(DEBUG) printf("ajout de la brick sur le plateau\n");
+
+        // 3.1 décrémentation de la pile de pioche
+        edit_displayed_int_value(&game->remaining_bricks, game->remaining_bricks.value-1);
 
         // 3.1 copie de la nouvelle brick sur le plateau
         temp_brick = copy_brick(game->next_brick);
@@ -56,7 +59,8 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         game->brick[x][y]->type = ATTACHED_BRICK;
 
         // 3.2 création d'une nouvelle brick dans la pile
-        temp_brick = create_random_brick();
+        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick();
+        else temp_brick = create_empty_brick();
         temp_brick->image = game->next_brick->image;
         game->next_brick = temp_brick;
 
@@ -65,23 +69,25 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         on_brick_table_expose_event(game->brick[x][y]->image, NULL, game);
         on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
 
-        // 3.4 décrémentation de la pile de pioche
-        edit_displayed_int_value(&game->remaining_bricks, game->remaining_bricks.value-1);
         return FALSE;
     }
 
     // 4. cas n°2 : il y a fusion possible entre la brique suivante et la brique déjà en place
-    if(are_superposable_bricks(game->brick[x][y], game->next_brick))
+    if(!is_empty_brick(game->brick[x][y]) && are_superposable_bricks(game->brick[x][y], game->next_brick) && (game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD))
     {
         if(DEBUG) printf("fusion des 2 bricks\n");
 
-        // 4.1 fusion des 2 bricks
+        // 4.1 décrémentation de la pile de la pioche
+        if(game->remaining_bricks.value > 0) edit_displayed_int_value(&game->remaining_bricks, game->remaining_bricks.value-1);
+
+        // 4.2 fusion des 2 bricks
         fusion_bricks(game->brick[x][y], game->next_brick, &temp_brick, ATTACHED_BRICK);
         temp_brick->image = game->brick[x][y]->image;
         game->brick[x][y] = temp_brick;
 
-        // 4.2 création d'une nouvelle brick
-        temp_brick = create_random_brick();
+        // 4.3 création d'une nouvelle brick
+        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick();
+        else temp_brick = create_empty_brick();
         temp_brick->image = game->next_brick->image;
         game->next_brick = temp_brick;
 
@@ -90,8 +96,6 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         on_brick_table_expose_event(game->brick[x][y]->image, NULL, game);
         on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
 
-        // 4.4 décrémentation de la pile de la pioche
-        edit_displayed_int_value(&game->remaining_bricks, game->remaining_bricks.value-1);
         return FALSE;
     }
 
@@ -106,6 +110,61 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         destroy_game_board_bricks_from_path(game, tab_test);
     }
     else if(DEBUG) printf("boucle ouverte\n");
+
+    l = 1;
+
+    // 6. si jamais le nombre de brique qu'il reste dans la pile est nul, on cherche à savoir si le jeu est fini ou pas
+    if(game->remaining_bricks.value == 0)
+    {
+        // 6.1 en niveaux faciles et intermédiaires : si il n'y a plus de brick on ne peut plus rien faire
+        if(game->rules == SOLO_GAME_EASY || game->rules == SOLO_GAME_MEDIUM) l = 0;
+
+        // 6.2 en niveau dur, il faut vérifier que le joueur ne puisse plus fusionner sa brick avec l'une du tableau
+        if(game->rules == SOLO_GAME_HARD)
+        {
+            l = 0;
+            if(is_turnable_brick(game->next_brick))
+            {
+                for(k=0; k<MAX_NB_DIRECTION; k++)
+                {
+                    turn_brick(game->next_brick);
+                    for(i=0; i<game->nb_brick_x; i++)
+                        for(j=0; j<game->nb_brick_y; j++)
+                            if(are_superposable_bricks(game->next_brick, game->brick[i][j]) && !is_empty_brick(game->brick[i][j])) l = 1;
+                }
+            }
+            else
+            {
+                for(i=0; i<game->nb_brick_x; i++)
+                    for(j=0; j<game->nb_brick_y; j++)
+                        if(are_superposable_bricks(game->next_brick, game->brick[i][j]) && !is_empty_brick(game->brick[i][j])) l = 1;
+            }
+        }
+    }
+    // 7. sinon il faut vérifier que le joueur puisse placer sa brique sur le plateau
+    else
+    {
+        l = 0;
+        if(is_turnable_brick(game->next_brick))
+        {
+            for(k=0; k<MAX_NB_DIRECTION; k++)
+            {
+                turn_brick(game->next_brick);
+                for(i=0; i<game->nb_brick_x; i++)
+                    for(j=0; j<game->nb_brick_y; j++)
+                        if(are_superposable_bricks(game->next_brick, game->brick[i][j])) l = 1;
+            }
+        }
+        else
+        {
+            for(i=0; i<game->nb_brick_x; i++)
+                for(j=0; j<game->nb_brick_y; j++)
+                    if(are_superposable_bricks(game->next_brick, game->brick[i][j])) l = 1;
+        }
+    }
+
+    if(l == 0) game_over(game);
+    else if(DEBUG) printf("pas de fin de jeu : des bricks sont encore superposables\n");
 
     return FALSE;
 }
@@ -185,4 +244,10 @@ int check_relationship_beetween_bricks(t_game_board* pt, int pos_x, int pos_y, i
         if(pt->brick[pos_x][pos_y]->stick[i].direction == direction) return 1;
 
     return 0;
+}
+
+/* fonction appellée à la fin du jeu */
+void game_over(t_game_board* game)
+{
+    printf("fin de jeu\n");
 }
