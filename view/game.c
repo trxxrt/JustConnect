@@ -41,6 +41,7 @@ gtk_window_set_title (GTK_WINDOW (winGame), "Just Connect");
 gtk_window_set_position (GTK_WINDOW (winGame), GTK_WIN_POS_CENTER);
 gtk_widget_realize (winGame);
 g_signal_connect (winGame, "destroy", gtk_main_quit, NULL);
+game->window = winGame;
 
     // 1.2 initialisation des tables
 right_table = gtk_table_new(game->nb_brick_x, game->nb_brick_y,TRUE);
@@ -158,31 +159,42 @@ gtk_main ();
 
 void update_display_game_to_new(t_game_board* old_game, t_game_board* new_game)
 {
+    // 0. variables temporaires
     int i, j;
 
+    // 1. réaffectation des éléments d'interface statiques
     new_game->new_game_menu = old_game->new_game_menu;
     new_game->best_score.label = old_game->best_score.label;
     new_game->last_score.label = old_game->last_score.label;
     new_game->score.label = old_game->score.label;
     new_game->remaining_bricks.label = old_game->remaining_bricks.label;
     new_game->next_brick->image = old_game->next_brick->image;
+    new_game->table = old_game->table;
+
+    // 2. réaffichage des nouveaux éléments
     on_next_brick_expose_event(new_game->next_brick->image, NULL, new_game->next_brick);
     edit_displayed_int_value(&new_game->best_score, 0);
     edit_displayed_int_value(&new_game->score, 0);
     edit_displayed_int_value(&new_game->last_score, 0);
     edit_displayed_int_value(&new_game->remaining_bricks, 0);
 
+    // 3. reconnexion des signaux avec les nouveaux objets
+    gtk_signal_disconnect_by_data(GTK_OBJECT(old_game->next_brick->image), old_game);
+    gtk_signal_disconnect_by_data(GTK_OBJECT(old_game->next_brick->image), old_game->next_brick);
     gtk_signal_disconnect_by_data(GTK_OBJECT (old_game->new_game_menu), old_game);
+    g_signal_connect(new_game->next_brick->image, "button_press_event", G_CALLBACK(on_next_brick_click_event), new_game);
+    g_signal_connect(new_game->next_brick->image, "expose-event", G_CALLBACK(on_next_brick_expose_event), new_game->next_brick);
     gtk_signal_connect_object (GTK_OBJECT (new_game->new_game_menu), "activate", GTK_SIGNAL_FUNC (display_launcher_pop_up), new_game);
 
+    // 4. suppression des anciennes drawing area du tableau
     for(i=0; i<old_game->nb_brick_x; i++)
         for(j=0; j<old_game->nb_brick_y; j++)
             gtk_container_remove(GTK_CONTAINER(old_game->table), old_game->brick[i][j]->image);
 
+    // 5. redimensionnement du tableau
     gtk_table_resize(GTK_TABLE(old_game->table), new_game->nb_brick_x, new_game->nb_brick_y);
 
-    new_game->table = old_game->table;
-
+    // 6. pour chaque nouvelle brick, on re-crée une drawing area et on y affecte les bonnes connexions et propriétées
     for(i=0; i<new_game->nb_brick_x; i++)
     {
         for(j=0; j<new_game->nb_brick_y; j++)
@@ -195,6 +207,8 @@ void update_display_game_to_new(t_game_board* old_game, t_game_board* new_game)
             gtk_table_attach_defaults(GTK_TABLE(new_game->table), new_game->brick[i][j]->image, i,i+1,j,j+1);
         }
     }
+
+    // 7. on ré-affiche le nouveau contenu de la table
     gtk_widget_show_all(new_game->table);
 }
 

@@ -11,11 +11,11 @@ int game()
     return 0;
 }
 
-int new_game(t_game_board* old_game)
+int new_game(t_game_board* old_game, int rules, int size_x, int size_y)
 {
     t_game_board* new_game = NULL;
 
-    new_game = create_game_board_with_default_value();
+    new_game = create_game_board (size_x, size_y, rules);
 
     update_display_game_to_new(old_game, new_game);
     return 0;

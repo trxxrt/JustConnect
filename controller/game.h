@@ -9,7 +9,7 @@
 
 // 1. déclaration des fonctions
 int game ();
-int new_game(t_game_board* old_game);
+int new_game(t_game_board* old_game, int rules, int size_x, int size_y);
 int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent);
 gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 gboolean on_next_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);

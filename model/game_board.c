@@ -28,6 +28,7 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y, int rules)
     pt->nb_brick_y = nb_brick_y;
     pt->table = NULL;
     pt->new_game_menu = NULL;
+    pt->window = NULL;
     pt->next_brick = create_random_brick();
 
     // 4. réglage de l'aide des fonds colorés pour la gui
