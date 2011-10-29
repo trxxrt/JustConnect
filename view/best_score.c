@@ -8,7 +8,7 @@ void display_best_score(GtkWidget* win)
     GtkWidget* vbox = NULL;
     GtkWidget* frame = NULL;
     GtkWidget* button = NULL;
-    //char* test = "prout";
+    char* test = "prout";
     char* buffer;
     char temp[50], temp2[50];
     int i = 0;
@@ -16,7 +16,9 @@ void display_best_score(GtkWidget* win)
     for(i=0; i<list->nb; i++)
         printf("%d : %s\n", list->scores[i].score, list->scores[i].pseudo);
 
-    //list = insert_in_best_score(list, 21, test);
+    list = insert_in_best_score(list, 21, test);
+
+    save_best_scores(list);
 
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (window), "Meilleurs scores");
@@ -101,7 +103,19 @@ t_best_score* load_best_scores()
 
 void save_best_scores(t_best_score* list)
 {
+    FILE* file_high_score = NULL;
+    int i = 0;
 
+    file_high_score=fopen("highscore.txt","w+");
+    if(file_high_score!=NULL)
+    {
+        if(DEBUG) printf("sauvegarde des %d meilleurs scores\n", list->nb);
+        for(i=0; i< list->nb ; i++)
+            fprintf(file_high_score,"%s %d\n", list->scores[i].pseudo, list->scores[i].score);
+
+    fclose(file_high_score);
+    }
+    else if(DEBUG) printf("echec de l'ouverture du fichier de sauvegarde\n");
 }
 
 gboolean is_a_best_score(t_best_score* list, int score)
@@ -144,115 +158,3 @@ t_best_score* insert_in_best_score(t_best_score* list, int score, char* pseudo)
     if(DEBUG) printf("le score %d de %s ne fait pas parti des meilleurs scores (< %d)\n", score, pseudo, list->scores[list->nb-1].score);
     return list;
 }
-
-/*
-
-if(score>highscore[nb_high_score-1].score)
-        {
-            system("CLS");
-            printf("Nouveau meilleur score !!!\n\n");
-            printf("entrez votre nom (max 10 caracteres) :\t");
-            tampon[0]='\0';
-            do
-            {
-                scanf("%s", tampon);
-            }while(tampon[0]=='\0');
-
-            if(pseudo!=NULL) free(pseudo);
-
-            if(strlen(tampon)<10)
-            {
-                pseudo=malloc(sizeof(char)*(strlen(tampon)+1));
-                strcpy(pseudo, tampon);
-            }
-            else
-            {
-                pseudo=malloc(11*sizeof(char));
-                for(i=0; i<10;i++)
-                    pseudo[i]=tampon[i];
-                pseudo[10]='\0';
-            }
-
-
-
-
-
-
-
-
-
-file_high_score=fopen("highscore.txt","r+");
-if(file_high_score!=NULL)
-{
-    temp = fgetc(file_high_score); // On initialise caractereActuel
-    nb_high_score=1;
-
-    // Boucle de lecture des caractères un à un
-    while (temp != EOF) // On continue tant que fgetc n'a pas retourné EOF (fin de fichier)
-    {
-        if(temp=='\n') nb_high_score++; // On affiche le caractère stocké dans caractereActuel
-        temp = fgetc(file_high_score); // On lit le caractère suivant
-    }
-
-    rewind(file_high_score); //retour au début
-
-    for(i=0; i<nb_high_score; i++)
-        fscanf(file_high_score, "%s %d",  highscore[i].pseudo, &highscore[i].score); // on stocke les highscores dans un tableau de structure
-
-    if(score>highscore[nb_high_score-1].score)
-    {
-        system("CLS");
-        printf("Nouveau meilleur score !!!\n\n");
-        printf("entrez votre nom (max 10 caracteres) :\t");
-        tampon[0]='\0';
-        do
-        {
-            scanf("%s", tampon);
-        }while(tampon[0]=='\0');
-
-        if(pseudo!=NULL) free(pseudo);
-
-        if(strlen(tampon)<10)
-        {
-            pseudo=malloc(sizeof(char)*(strlen(tampon)+1));
-            strcpy(pseudo, tampon);
-        }
-        else
-        {
-            pseudo=malloc(11*sizeof(char));
-            for(i=0; i<10;i++)
-                pseudo[i]=tampon[i];
-            pseudo[10]='\0';
-        }
-
-        fclose(file_high_score);
-
-
-        z=0; // booléen : si vaut 1, c'est que le score du joueur a deja été enregistré...
-        file_high_score=fopen("highscore.txt","w+");
-        if(file_high_score!=NULL)
-        {
-            for(i=0; i<nb_high_score; i++)
-            {
-                if(score>highscore[i].score && z==0)
-                {
-                    printf("superieur au score : %d\n\n",i+1); //useless
-                    rewind(file_high_score); //on se repalce au début
-                    j=0;
-                    while(j<i)
-                    {
-                        fprintf(file_high_score,"%s %d\n",highscore[j].pseudo, highscore[j].score); //on lis, jusqu'a etre au bon endroit
-                        j++;
-                    }
-                    fprintf(file_high_score,"%s %d", pseudo, score); //on inscrit les info du joueur
-
-                    for(j=i;j<=nb_high_score;j++) //on complete le reste du fichier avec les info restantes.
-                    {
-                        fprintf(file_high_score,"\n%s %d",highscore[j].pseudo, highscore[j].score);
-                    }
-                    z++;
-                }
-            }
-        fclose(file_high_score);
-        }
-*/
