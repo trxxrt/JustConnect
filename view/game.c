@@ -26,8 +26,8 @@ GtkWidget* quit_item = NULL;
 GtkWidget* file_item = NULL;
 GtkWidget* menu_help = NULL;
 GtkWidget* rules_item = NULL;
-GtkWidget* credit_item = NULL;
 GtkWidget* help_item = NULL;
+GtkWidget* about_item = NULL;
 
     // 0.3 variables temporaires de parcours de boucle
 int i = 0;
@@ -73,9 +73,9 @@ option_item = gtk_menu_item_new_with_label ("Option");
 best_scores_item = gtk_menu_item_new_with_label ("Meilleurs scores");
 quit_item = gtk_menu_item_new_with_label ("Quitter");
 rules_item = gtk_menu_item_new_with_label ("Règles du jeu");
-credit_item = gtk_menu_item_new_with_label ("Crédits");
 file_item = gtk_menu_item_new_with_label ("Fichier");
 help_item = gtk_menu_item_new_with_label ("Aide");
+about_item = gtk_menu_item_new_with_label ("A propos");
 game->new_game_menu = new_game_item;
 
 // 2. paramétrage de la menu_bar
@@ -86,12 +86,12 @@ gtk_menu_append (GTK_MENU (menu_file), option_item);
 gtk_menu_append (GTK_MENU (menu_file), best_scores_item);
 gtk_menu_append (GTK_MENU (menu_file), quit_item);
 gtk_menu_append (GTK_MENU (menu_help), rules_item);
-gtk_menu_append (GTK_MENU (menu_help), credit_item);
+gtk_menu_append (GTK_MENU (menu_help), about_item);
 gtk_menu_bar_append (GTK_MENU_BAR (menu_bar), file_item);
 gtk_menu_bar_append (GTK_MENU_BAR (menu_bar), help_item);
 
     // 2.2 on intègre la barre de menu à la vbox
-gtk_box_pack_start (GTK_BOX(vbox), menu_bar, TRUE, TRUE, 0);
+gtk_box_pack_start (GTK_BOX(vbox), menu_bar, FALSE, FALSE, 0);
 
     // 2.3 association des items à la barre de menu principale (fichier, edit, help).
 gtk_menu_item_set_submenu (GTK_MENU_ITEM (file_item), menu_file);
@@ -101,9 +101,9 @@ gtk_menu_item_set_submenu (GTK_MENU_ITEM (help_item), menu_help);
 gtk_signal_connect_object (GTK_OBJECT (new_game_item), "activate", GTK_SIGNAL_FUNC (display_launcher_pop_up), game);
 gtk_signal_connect_object (GTK_OBJECT (option_item), "activate", GTK_SIGNAL_FUNC (options), winGame);
 gtk_signal_connect_object (GTK_OBJECT (best_scores_item), "activate", GTK_SIGNAL_FUNC (display_best_score), winGame);
-gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate", GTK_SIGNAL_FUNC (gtk_main_quit), " ");
+gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate", GTK_SIGNAL_FUNC (gtk_main_quit), NULL);
+gtk_signal_connect_object (GTK_OBJECT (about_item), "activate", GTK_SIGNAL_FUNC (display_about), winGame);
 //gtk_signal_connect_object (GTK_OBJECT (help_items), "activate", GTK_SIGNAL_FUNC (détruire), " "); -> pour help_item
-//gtk_signal_connect_object (GTK_OBJECT (credit_items), "activate", GTK_SIGNAL_FUNC (détruire), " "); -> pour credit_item
 
 //position des frames dans le tableau de gauche
 gtk_table_attach_defaults(GTK_TABLE(left_table), frame_best_score, 1, 5, 1, 4);
