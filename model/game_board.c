@@ -77,10 +77,13 @@ void delete_game_board(t_game_board* game)
 }
 
 
-void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
+void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test, t_color* color)
 {
     // 0. création des variables locales
-    int i, j;
+    int i, j, k, l;
+    t_color** temp = NULL;
+    int nb_stick_to_keep = 0;
+    int nb_color = 0;
     int nb_deleted_brick = 0;
     int score_to_be_added = 0;
     t_brick* temp_brick = NULL;
@@ -92,11 +95,44 @@ void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
         {
             if (tab_test[i][j] == 1)
             {
-                temp_brick = create_empty_brick();
-                temp_brick->image = pt->brick[i][j]->image;
-                pt->brick[i][j] = temp_brick;
-                on_brick_table_expose_event(pt->brick[i][j]->image, NULL, (gpointer)pt);
-                nb_deleted_brick++;
+                get_different_colors_from_brick(pt->brick[i][j], &temp, &nb_color);
+
+                // 1.1 si il n'y a qu'une seule couleur, on crée une nouvelle brick vide
+                if(nb_color == 1)
+                {
+                    temp_brick = create_empty_brick();
+                    temp_brick->image = pt->brick[i][j]->image;
+                    pt->brick[i][j] = temp_brick;
+                    on_brick_table_expose_event(pt->brick[i][j]->image, NULL, (gpointer)pt);
+                    nb_deleted_brick++;
+                }
+
+                // 1.2 sinon on reprend les anciens sticks
+                else
+                {
+                    nb_stick_to_keep = 0;
+                    for(k=0; k<pt->brick[i][j]->nb_stick; k++)
+                        if(!is_same_color(pt->brick[i][j]->stick[k].color, color))
+                            nb_stick_to_keep++;
+
+                    temp_brick = create_brick(FALSE, ATTACHED_BRICK, create_stick_table(nb_stick_to_keep), nb_stick_to_keep);
+
+                    l = -1;
+                    for(k=0; k<pt->brick[i][j]->nb_stick; k++)
+                    {
+                        if(!is_same_color(pt->brick[i][j]->stick[k].color, color))
+                        {
+                            l++;
+                            temp_brick->stick[l].direction = pt->brick[i][j]->stick[k].direction;
+                            temp_brick->stick[l].color = copy_color(pt->brick[i][j]->stick[k].color);
+                        }
+                    }
+
+                    temp_brick->image = pt->brick[i][j]->image;
+                    pt->brick[i][j] = temp_brick;
+                    on_brick_table_expose_event(pt->brick[i][j]->image, NULL, (gpointer)pt);
+                    nb_deleted_brick++;
+                }
             }
         }
     }

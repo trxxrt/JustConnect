@@ -31,6 +31,7 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     int nb_color = 0;
     t_color** colors = NULL;
     int is_closed_path = 0;
+    int is_temp_closed_path = 0;
     t_brick* temp_brick = NULL;
     t_game_board* game = (t_game_board*)pt;
     int** tab_test = (int**)malloc(game->nb_brick_x*sizeof(int*));
@@ -108,12 +109,18 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     get_different_colors_from_brick(game->brick[x][y], &colors, &nb_color);
 
     for(i=0; i<nb_color; i++)
-        is_closed_path = is_closed_path || detect_looped_brick (TRUE, tab_test, game, x, y, 0, colors[i]);
+    {
+        is_temp_closed_path = detect_looped_brick (TRUE, tab_test, game, x, y, 0, colors[i]);
+        is_closed_path = is_closed_path || is_temp_closed_path;
+
+        if(is_temp_closed_path) is_temp_closed_path = i;
+        if(is_temp_closed_path) break;
+    }
 
     if(is_closed_path)
     {
         if(DEBUG) printf("boucle fermée\n");
-        destroy_game_board_bricks_from_path(game, tab_test);
+        destroy_game_board_bricks_from_path(game, tab_test, colors[is_temp_closed_path]);
     }
     else if(DEBUG) printf("boucle ouverte\n");
 
