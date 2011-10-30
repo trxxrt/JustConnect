@@ -31,7 +31,7 @@ t_brick* create_brick (gboolean turnable, int type, t_stick* stick, int nb_stick
 }
 
 /* fonction de création d'une brick aléatoire */
-t_brick* create_random_brick ()
+t_brick* create_random_brick (int rules, int color)
 {
     // 0. déclaration des variables et initialisation
     int i = 0;
@@ -51,21 +51,27 @@ t_brick* create_random_brick ()
     // 3. infos de debug
     if(DEBUG) printf("+ création d'une brick aléatoire\n");
 
-    // 4. création du tableau de sticks
+    // 4. si le gametype est intermediaire, on choisit une coueleur pour toute la brique
+    if(rules == SOLO_GAME_MEDIUM) color = rand()%MAX_NB_COLOR;
+
+    // 5. création du tableau de sticks
     stick = create_stick_table(nb_stick);
     for(i=0; i<nb_stick; i++)
     {
         // 4.1 génération de la direction (on vérifie qu'elle n'a pas déjà été prise)
         do { temp_direction = rand()%MAX_NB_DIRECTION; } while(is_in_int_table(taken_value, MAX_NB_DIRECTION, temp_direction));
 
-        // 4.2 on update les infos du stick
-        set_stick_informations(&(stick[i]), create_color_from_id(rand()%MAX_NB_COLOR), temp_direction);
+        // 4.2 si le gametype est difficile, on fait une couleur par stick
+        if(rules == SOLO_GAME_HARD) color = rand()%MAX_NB_COLOR;
 
-        // 4.3 on rajoute la nouvelle direction dans la liste des valeurs interdites
+        // 4.3 on update les infos du stick
+        set_stick_informations(&(stick[i]), create_color_from_id(color), temp_direction);
+
+        // 4.4 on rajoute la nouvelle direction dans la liste des valeurs interdites
         taken_value[i] = stick[i].direction;
     }
 
-
+    // 6. on retorune la brick créé
     return create_brick (turnable, UNATTACHED_BRICK, stick, nb_stick);
 }
 

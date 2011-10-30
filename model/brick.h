@@ -13,6 +13,8 @@
 #define ATTACHED_BRICK 3
 #define UNBREAKABLE_BRICK 4
 
+#define GAME_DEFAULT_SIZE_OF_BRICK 40
+
 // 1. déclaration des structures
 typedef struct struct_brick
 {
@@ -25,7 +27,7 @@ typedef struct struct_brick
 
 // 2. déclaration des fonctions
 t_brick* create_brick (gboolean turnable, int type, t_stick* stick, int nb_stick);
-t_brick* create_random_brick ();
+t_brick* create_random_brick (int rules, int color);
 t_brick* create_empty_brick ();
 void delete_brick (t_brick* brick);
 t_brick* copy_brick (t_brick* brick);

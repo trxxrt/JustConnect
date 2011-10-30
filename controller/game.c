@@ -1,6 +1,6 @@
 #include "game.h"
 
-/* fonction de lancement du jeu */
+/* fonction de lancement initial du jeu (appelé UNE fois par lancement du programme) */
 int game()
 {
     t_game_board* game = NULL;
@@ -11,6 +11,7 @@ int game()
     return 0;
 }
 
+/* fonction de création d'un nouveau jeu aloprs qu'un ancien jeu était déjà lancé */
 int new_game(t_game_board* old_game, int rules, int size_x, int size_y)
 {
     t_game_board* new_game = NULL;
@@ -59,7 +60,7 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         game->brick[x][y]->type = ATTACHED_BRICK;
 
         // 3.2 création d'une nouvelle brick dans la pile
-        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick();
+        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick(game->rules, game->color);
         else temp_brick = create_empty_brick();
         temp_brick->image = game->next_brick->image;
         game->next_brick = temp_brick;
@@ -86,7 +87,7 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         game->brick[x][y] = temp_brick;
 
         // 4.3 création d'une nouvelle brick
-        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick();
+        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick(game->rules, game->color);
         else temp_brick = create_empty_brick();
         temp_brick->image = game->next_brick->image;
         game->next_brick = temp_brick;

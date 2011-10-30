@@ -29,7 +29,8 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y, int rules)
     pt->table = NULL;
     pt->new_game_menu = NULL;
     pt->window = NULL;
-    pt->next_brick = create_random_brick();
+    if(rules == SOLO_GAME_EASY) pt->color = rand()%MAX_NB_COLOR;
+    pt->next_brick = create_random_brick(pt->rules, pt->color);
 
     // 4. réglage de l'aide des fonds colorés pour la gui
     if(rules == SOLO_GAME_EASY || rules == SOLO_GAME_MEDIUM) pt->gui_color_help =  TRUE;
@@ -106,7 +107,7 @@ void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test)
     // 3. dans le cas où il ne restait pas de brick, on re-genere la brick suivante
     if(pt->remaining_bricks.value == 0 && pt->rules != SOLO_GAME_HARD)
     {
-        temp_brick = create_random_brick();
+        temp_brick = create_random_brick(pt->rules, pt->color);
         temp_brick->image = pt->next_brick->image;
         pt->next_brick = temp_brick;
         g_signal_connect(pt->next_brick->image, "expose-event", G_CALLBACK(on_next_brick_expose_event), pt->next_brick);

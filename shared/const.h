@@ -4,6 +4,11 @@
 // 0. définition de constantes génériques
 #define DEBUG 1
 
+#define SOLO_GAME_EASY 1
+#define SOLO_GAME_MEDIUM 2
+#define SOLO_GAME_HARD 3
+#define SOLO_GAME_CUSTOM 4
+
 // 1. inclusions des autres .h de constantes
 #include <gtk/gtk.h>
 #include <stdio.h>
