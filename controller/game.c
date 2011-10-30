@@ -173,17 +173,22 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
 /* fonction recursive de détéction de boucle fermée */
 int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent)
 {
+    // 0. déclaration des vartiables temporaires
     int i;
     int reciprocal_result = 1;
     int next_x = pos_x, next_y = pos_y, next_direction = 0;
     int direction_result = 1;
 
+    // 1. on met à 1 la position à laquele on se trouve
     tab_test[pos_x][pos_y] = 1;
 
+    // 2. on regarde le résultat de la recursion seulement si le nombre de stick est supérieur à 0
     if (pt->brick[pos_x][pos_y]->nb_stick > 0)
     {
+        // 2.1 on vérifie la réciprocité entre les liens de parenté du parent et de son fils
         if(!init) reciprocal_result = check_relationship_beetween_bricks(pt, pos_x, pos_y, direction_of_parent);
 
+        // 2.2 puis, pour chaun de ses sticks, on applique la même fonction à ses fils
         for(i=0; i <pt->brick[pos_x][pos_y]->nb_stick; i++)
         {
             next_x = pos_x; next_y = pos_y;
@@ -220,6 +225,7 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
                 break;
             }
 
+            // 2.3 on applique la fonction à son fils, en faisant attention à boucler les interactions
             if(tab_test[next_x][next_y] == 0) direction_result = direction_result && detect_looped_brick (FALSE, tab_test, pt, next_x, next_y, next_direction);
             else direction_result = direction_result && check_relationship_beetween_bricks(pt, next_x, next_y, next_direction);
         }
@@ -231,19 +237,27 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
 /* fonction de rotation de la prochaine brick en cas de clic dessus */
 gboolean on_next_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt)
 {
+    // 0. déclaration des variables locales
     t_game_board* game = (t_game_board*)pt;
+
+    // 1. on ré-expose la brick si la rotation de la brick a été faite
     if(turn_brick(game->next_brick)) on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
+
+    // 2. on return faux pour empêcher l'évenement de se re-déclencher
     return FALSE;
 }
 
 /* fonction servat à vérifier qu'un fils a bien une realtion avec le aprent qui l'a appelé */
 int check_relationship_beetween_bricks(t_game_board* pt, int pos_x, int pos_y, int direction)
 {
+    // 0. déclaration des variables locales
     int i =0;
 
+    // 1. on regarde si on trouve le stick recherché
     for(i=0; i <pt->brick[pos_x][pos_y]->nb_stick; i++)
         if(pt->brick[pos_x][pos_y]->stick[i].direction == direction) return 1;
 
+    // 2. si on le trouve pas on retourne zero
     return 0;
 }
 
@@ -266,5 +280,4 @@ void game_over(t_game_board* game)
 
     // 4. on affiche les meilleurs scores
     display_best_score(game->window);
-
 }
