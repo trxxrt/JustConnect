@@ -17,7 +17,7 @@ void display_rules(GtkWidget* win)
 
         // 1.2 paramétrage de la boite de dialogue
     gtk_container_set_border_width (GTK_CONTAINER (window), 8);
-    gtk_window_set_title(GTK_WINDOW(window), "Nouvelle partie");
+    gtk_window_set_title(GTK_WINDOW(window), "Informations");
     gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
 
     frame = gtk_frame_new(" Règles du jeu ");

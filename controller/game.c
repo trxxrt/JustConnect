@@ -196,43 +196,46 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
         // 2.2 puis, pour chaun de ses sticks, on applique la même fonction à ses fils
         for(i=0; i <pt->brick[pos_x][pos_y]->nb_stick; i++)
         {
-            next_x = pos_x; next_y = pos_y;
-
-            switch(pt->brick[pos_x][pos_y]->stick[i].direction)
+            if(is_same_color(pt->brick[pos_x][pos_y]->stick[i].color, color_of_parent))
             {
-                case BOTTOM:
-                    next_direction = TOP;
-                    if (pos_y < pt->nb_brick_y-1) next_y = pos_y+1;
-                    else next_y = 0;
-                break;
+                next_x = pos_x; next_y = pos_y;
 
-                case TOP:
-                    next_direction = BOTTOM;
-                    if (pos_y > 0) next_y = pos_y-1;
-                    else next_y = pt->nb_brick_y-1;
-                break;
+                switch(pt->brick[pos_x][pos_y]->stick[i].direction)
+                {
+                    case BOTTOM:
+                        next_direction = TOP;
+                        if (pos_y < pt->nb_brick_y-1) next_y = pos_y+1;
+                        else next_y = 0;
+                    break;
 
-                case RIGHT:
-                    next_direction = LEFT;
-                    if (pos_x < pt->nb_brick_x - 1) next_x = pos_x+1;
-                    else next_x = 0;
-                break;
+                    case TOP:
+                        next_direction = BOTTOM;
+                        if (pos_y > 0) next_y = pos_y-1;
+                        else next_y = pt->nb_brick_y-1;
+                    break;
 
-                case LEFT:
-                    next_direction = RIGHT;
-                    if (pos_x > 0) next_x = pos_x-1;
-                    else next_x = pt->nb_brick_x-1;
-                break;
+                    case RIGHT:
+                        next_direction = LEFT;
+                        if (pos_x < pt->nb_brick_x - 1) next_x = pos_x+1;
+                        else next_x = 0;
+                    break;
 
-                default:
-                next_direction = MAX_NB_DIRECTION+1;
-                printf("problem : unexpeted default on switch");
-                break;
+                    case LEFT:
+                        next_direction = RIGHT;
+                        if (pos_x > 0) next_x = pos_x-1;
+                        else next_x = pt->nb_brick_x-1;
+                    break;
+
+                    default:
+                    next_direction = MAX_NB_DIRECTION+1;
+                    printf("problem : unexpeted default on switch");
+                    break;
+                }
+
+                // 2.3 on applique la fonction à son fils, en faisant attention à boucler les interactions
+                if(tab_test[next_x][next_y] == 0) direction_result = direction_result && detect_looped_brick (FALSE, tab_test, pt, next_x, next_y, next_direction, color_of_parent);
+                else direction_result = direction_result && check_relationship_beetween_bricks(pt, next_x, next_y, next_direction, color_of_parent);
             }
-
-            // 2.3 on applique la fonction à son fils, en faisant attention à boucler les interactions
-            if(tab_test[next_x][next_y] == 0) direction_result = direction_result && detect_looped_brick (FALSE, tab_test, pt, next_x, next_y, next_direction, color_of_parent);
-            else direction_result = direction_result && check_relationship_beetween_bricks(pt, next_x, next_y, next_direction, color_of_parent);
         }
         return (direction_result && reciprocal_result);
     }
@@ -260,7 +263,7 @@ int check_relationship_beetween_bricks(t_game_board* pt, int pos_x, int pos_y, i
 
     // 1. on regarde si on trouve le stick recherché
     for(i=0; i <pt->brick[pos_x][pos_y]->nb_stick; i++)
-        if(pt->brick[pos_x][pos_y]->stick[i].direction == direction) return 1;
+        if(pt->brick[pos_x][pos_y]->stick[i].direction == direction && is_same_color(pt->brick[pos_x][pos_y]->stick[i].color, color)) return 1;
 
     // 2. si on le trouve pas on retourne zero
     return 0;
