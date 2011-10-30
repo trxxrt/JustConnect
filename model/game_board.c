@@ -138,7 +138,9 @@ void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test, t_col
     }
 
     // 2. incrémentation du score
-    score_to_be_added = nb_deleted_brick*nb_deleted_brick;
+    score_to_be_added = nb_deleted_brick;
+    if(pt->rules == SOLO_GAME_MEDIUM || pt->rules == SOLO_GAME_HARD) score_to_be_added *= nb_deleted_brick;
+    if(pt->rules == SOLO_GAME_HARD) score_to_be_added *= nb_deleted_brick;
 
     // 3. dans le cas où il ne restait pas de brick, on re-genere la brick suivante
     if(pt->remaining_bricks.value == 0 && pt->rules != SOLO_GAME_HARD)
@@ -157,5 +159,5 @@ void destroy_game_board_bricks_from_path(t_game_board* pt, int** tab_test, t_col
     if(score_to_be_added > pt->best_score.value) edit_displayed_int_value(&pt->best_score, score_to_be_added);
 
     // 5. debug
-    if(DEBUG) printf("! score obtenu : %d\n+ ajout de %d bricks dans la pioche\n", score_to_be_added, nb_deleted_brick/2);
+    if(DEBUG) printf("score obtenu : %d\n+ ajout de %d bricks dans la pioche\n", score_to_be_added, nb_deleted_brick/2);
 }

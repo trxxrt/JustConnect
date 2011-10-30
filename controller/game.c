@@ -76,34 +76,7 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         return FALSE;
     }
 
-    // 4. cas n°2 : il y a fusion possible entre la brique suivante et la brique déjà en place
-    if(!is_empty_brick(game->brick[x][y]) && are_superposable_bricks(game->brick[x][y], game->next_brick) && (game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD))
-    {
-        if(DEBUG) printf("fusion des 2 bricks\n");
-
-        // 4.1 décrémentation de la pile de la pioche
-        if(game->remaining_bricks.value > 0) edit_displayed_int_value(&game->remaining_bricks, game->remaining_bricks.value-1);
-
-        // 4.2 fusion des 2 bricks
-        fusion_bricks(game->brick[x][y], game->next_brick, &temp_brick, ATTACHED_BRICK);
-        temp_brick->image = game->brick[x][y]->image;
-        game->brick[x][y] = temp_brick;
-
-        // 4.3 création d'une nouvelle brick
-        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick(game->rules, game->color);
-        else temp_brick = create_empty_brick();
-        temp_brick->image = game->next_brick->image;
-        game->next_brick = temp_brick;
-
-        // 4.3 raffraichissement de l'affichage
-        g_signal_connect(game->next_brick->image, "expose-event", G_CALLBACK(on_next_brick_expose_event), game->next_brick);
-        on_brick_table_expose_event(game->brick[x][y]->image, NULL, game);
-        on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
-
-        return FALSE;
-    }
-
-    // 5. cas n°3 : on recherche à savoir si une boucle est bouclée
+     // 4. cas n°2 : on recherche à savoir si une boucle est bouclée
     if(DEBUG) printf("recherche de boucle fermée\n");
 
     get_different_colors_from_brick(game->brick[x][y], &colors, &nb_color);
@@ -121,8 +94,36 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     {
         if(DEBUG) printf("boucle fermée\n");
         destroy_game_board_bricks_from_path(game, tab_test, colors[is_temp_closed_path]);
+        return FALSE;
     }
     else if(DEBUG) printf("boucle ouverte\n");
+
+    // 5. cas n°3 : il y a fusion possible entre la brique suivante et la brique déjà en place
+    if(!is_empty_brick(game->brick[x][y]) && are_superposable_bricks(game->brick[x][y], game->next_brick) && (game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD))
+    {
+        if(DEBUG) printf("fusion des 2 bricks\n");
+
+        // 5.1 décrémentation de la pile de la pioche
+        if(game->remaining_bricks.value > 0) edit_displayed_int_value(&game->remaining_bricks, game->remaining_bricks.value-1);
+
+        // 5.2 fusion des 2 bricks
+        fusion_bricks(game->brick[x][y], game->next_brick, &temp_brick, ATTACHED_BRICK);
+        temp_brick->image = game->brick[x][y]->image;
+        game->brick[x][y] = temp_brick;
+
+        // 5.3 création d'une nouvelle brick
+        if(game->remaining_bricks.value > 0 || game->rules == SOLO_GAME_HARD) temp_brick = create_random_brick(game->rules, game->color);
+        else temp_brick = create_empty_brick();
+        temp_brick->image = game->next_brick->image;
+        game->next_brick = temp_brick;
+
+        // 5.4 raffraichissement de l'affichage
+        g_signal_connect(game->next_brick->image, "expose-event", G_CALLBACK(on_next_brick_expose_event), game->next_brick);
+        on_brick_table_expose_event(game->brick[x][y]->image, NULL, game);
+        on_next_brick_expose_event(game->next_brick->image, NULL, game->next_brick);
+
+        return FALSE;
+    }
 
     l = 1;
 
