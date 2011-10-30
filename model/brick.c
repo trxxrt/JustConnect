@@ -189,20 +189,27 @@ int turn_brick(t_brick* brick)
 /* fonction retournant les couleurs d'une brick */
 void get_different_colors_from_brick(t_brick* brick, t_color*** colors, int* nb_color)
 {
+    // 0. variables locales
     int i=0, j=0;
     int found = 0;
     int temp_nb_color = 0;
     t_color** temp = (t_color**)malloc(MAX_NB_COLOR*sizeof(t_color*));
 
+    // 1. on initialise le tableau de pointeur
     for(i=0; i<MAX_NB_COLOR; i++)
         temp[i] = NULL;
 
+    // 2. on parcourt l'ensemble des sticks à la recherche des couleurs
     for(i=0; i<brick->nb_stick; i++)
     {
+        // 2.1 par défaut, on a pas trouvé la couleur
         found = 0;
+
+        // 2.2 on parcourt l'ensemble des couleurs déjà stockées à la recherche d'une couleur similaire
         for(j=0; j<temp_nb_color; j++)
             if(is_same_color(brick->stick[i].color, temp[j])) found = 1;
 
+        // 2.3 si jamais on a pas trouvé la couleur dans la liste, on l'ajoute à la liste
         if(!found)
         {
             temp[temp_nb_color] = copy_color(brick->stick[i].color);
@@ -210,7 +217,10 @@ void get_different_colors_from_brick(t_brick* brick, t_color*** colors, int* nb_
         }
     }
 
-    printf("%d couleurs trouvé\n", temp_nb_color);
+    // 3. print de debug
+    if(DEBUG) printf("%d couleurs trouvé\n", temp_nb_color);
+
+    // 4. on renvoie les valeurs de couleurs
     *nb_color = temp_nb_color;
     *colors = temp;
 }
