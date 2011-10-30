@@ -23,7 +23,7 @@ void display_rules(GtkWidget* win)
     frame = gtk_frame_new(" Règles du jeu ");
     gtk_container_set_border_width(GTK_CONTAINER(frame), 10);
 
-    vbox = gtk_vbox_new(TRUE, 5);
+    vbox = gtk_vbox_new(FALSE, 5);
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 10);
 
     global_vbox = gtk_vbox_new(FALSE, 15);
@@ -37,7 +37,7 @@ void display_rules(GtkWidget* win)
     label = gtk_label_new("« Just Connect » est un jeu de réfléxion codé en GTK+ et cairo placé sous licence GNU GPL.");
     gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
     gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 2);
-    label = gtk_label_new("Le but du jeu est de fermer des chemins d'une même couleur :\n  - Pour que le chemin soit validé, toutes les pièces le constituant doivent être connectées\n  - plus un chemin est long, plus il rapporte de points.");
+    label = gtk_label_new("Le but du jeu est de fermer des chemins d'une même couleur :\n  - Pour que le chemin soit validé, toutes les pièces le constituant doivent être connectées\n  - plus un chemin est long, plus il rapporte de points\n  - en mode facile, le score est proportionnel au nombre de briques détruites\n  - en mode intermédiaire, le score est proportionnel au carré du nombre de briques détruites\n  - en mode difficile, le score est proportionnel au cube du nombre de briques détruites");
     gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
     gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 2);
     label = gtk_label_new("Si la brique proposée dans la pioche est tournable, un symbole l'indique.\nIl suffit alors au joueur de cliquer sur la brique pour la tourner de 90° dans le sens de l'aiguille d'une montre.");
