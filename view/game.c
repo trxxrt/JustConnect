@@ -102,6 +102,7 @@ gtk_menu_item_set_submenu (GTK_MENU_ITEM (help_item), menu_help);
     // 2.4 ajout des évenements
 gtk_signal_connect_object (GTK_OBJECT (new_game_item), "activate", GTK_SIGNAL_FUNC (display_launcher_pop_up), game);
 gtk_signal_connect_object (GTK_OBJECT (best_scores_item), "activate", GTK_SIGNAL_FUNC (display_best_score), winGame);
+gtk_signal_connect_object (GTK_OBJECT (rules_item), "activate", GTK_SIGNAL_FUNC (display_rules), winGame);
 gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate", GTK_SIGNAL_FUNC (gtk_main_quit), NULL);
 gtk_signal_connect_object (GTK_OBJECT (about_item), "activate", GTK_SIGNAL_FUNC (display_about), winGame);
 //gtk_signal_connect_object (GTK_OBJECT (help_items), "activate", GTK_SIGNAL_FUNC (détruire), " "); -> pour help_item

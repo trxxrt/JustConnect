@@ -7,6 +7,7 @@
 #include "../model/game_board.h"
 #include "game_launcher.h"
 #include "about.h"
+#include "rules.h"
 #include "best_score.h"
 
 #define WHITE_BACKGROUND 0
