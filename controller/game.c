@@ -249,5 +249,21 @@ int check_relationship_beetween_bricks(t_game_board* pt, int pos_x, int pos_y, i
 /* fonction appellée à la fin du jeu */
 void game_over(t_game_board* game)
 {
-    printf("fin de jeu\n");
+    // 0. déclaration des variables temporaires
+    t_best_score* list = load_best_scores();
+    char* pseudo = NULL;
+
+    // 1. print de debug
+    if(DEBUG) printf("fin de jeu\n");
+
+    // 2. on demande son pseudo au joueur
+    pseudo = display_game_over(game);
+
+    // 3. on insère le score dans la liste des meilleurs scores
+    list = insert_in_best_score(list, game->score.value, pseudo);
+    save_best_scores(list);
+
+    // 4. on affiche les meilleurs scores
+    display_best_score(game->window);
+
 }

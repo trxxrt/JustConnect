@@ -1,5 +1,5 @@
-#ifndef VIEW_GAME_LAUNCHER_H
-#define VIEW_GAME_LAUNCHER_H
+#ifndef VIEW_GAME_OVER_H
+#define VIEW_GAME_OVER_H
 
 // 0. inclusion des librairies
 #include <stdlib.h>
@@ -8,6 +8,7 @@
 #include "../controller/options.h"
 
 // 1. déclaration des fonctions
-void display_launcher_pop_up (gpointer pt);
+char* display_game_over (gpointer pt);
 
 #endif
+

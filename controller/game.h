@@ -6,6 +6,7 @@
 #include <gtk/gtk.h>
 #include "../view/game.h"
 #include "../model/game_board.h"
+#include "../view/game_over.h"
 
 // 1. déclaration des fonctions
 int game ();

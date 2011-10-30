@@ -15,8 +15,6 @@ void display_best_score(GtkWidget* win)
     for(i=0; i<list->nb; i++)
         printf("%d : %s\n", list->scores[i].score, list->scores[i].pseudo);
 
-    save_best_scores(list);
-
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (window), "Meilleurs scores");
     gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);

@@ -12,8 +12,6 @@
 #define SOLO_GAME_HARD 3
 #define SOLO_GAME_CUSTOM 4
 
-#define VERSUS_GAME 10
-
 #define GAME_DEFAULT_SIZE_OF_BRICK 40
 
 // 1. déclaration des structures
