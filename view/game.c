@@ -21,7 +21,6 @@ GtkWidget* frame_remaining_brick = NULL;
 GtkWidget* menu_bar = NULL;
 GtkWidget* menu_file = NULL;
 GtkWidget* new_game_item = NULL;
-GtkWidget* option_item = NULL;
 GtkWidget* best_scores_item = NULL;
 GtkWidget* quit_item = NULL;
 GtkWidget* file_item = NULL;
@@ -74,7 +73,6 @@ menu_bar = gtk_menu_bar_new ();
 menu_file = gtk_menu_new ();
 menu_help = gtk_menu_new ();
 new_game_item = gtk_menu_item_new_with_label ("Nouvelle Partie");
-option_item = gtk_menu_item_new_with_label ("Option");
 best_scores_item = gtk_menu_item_new_with_label ("Meilleurs scores");
 quit_item = gtk_menu_item_new_with_label ("Quitter");
 rules_item = gtk_menu_item_new_with_label ("Règles du jeu");
@@ -87,7 +85,6 @@ game->new_game_menu = new_game_item;
 
     // 2.1 on associe les items d'un menu au menu concerné
 gtk_menu_append (GTK_MENU (menu_file), new_game_item);
-gtk_menu_append (GTK_MENU (menu_file), option_item);
 gtk_menu_append (GTK_MENU (menu_file), best_scores_item);
 gtk_menu_append (GTK_MENU (menu_file), quit_item);
 gtk_menu_append (GTK_MENU (menu_help), rules_item);
@@ -104,7 +101,6 @@ gtk_menu_item_set_submenu (GTK_MENU_ITEM (help_item), menu_help);
 
     // 2.4 ajout des évenements
 gtk_signal_connect_object (GTK_OBJECT (new_game_item), "activate", GTK_SIGNAL_FUNC (display_launcher_pop_up), game);
-gtk_signal_connect_object (GTK_OBJECT (option_item), "activate", GTK_SIGNAL_FUNC (options), winGame);
 gtk_signal_connect_object (GTK_OBJECT (best_scores_item), "activate", GTK_SIGNAL_FUNC (display_best_score), winGame);
 gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate", GTK_SIGNAL_FUNC (gtk_main_quit), NULL);
 gtk_signal_connect_object (GTK_OBJECT (about_item), "activate", GTK_SIGNAL_FUNC (display_about), winGame);

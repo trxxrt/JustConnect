@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "../model/game_board.h"
-#include "../controller/options.h"
 #include "game_launcher.h"
 #include "about.h"
 #include "best_score.h"

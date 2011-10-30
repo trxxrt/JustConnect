@@ -8,7 +8,6 @@ char* display_game_over (gpointer pt)
     GtkWidget* content_area = NULL;
     GtkWidget* label = NULL;
     GtkWidget* entry = NULL;
-    GtkWidget* entry_buffer = NULL;
     char* buffer = (char*)malloc(15*sizeof(char));
 
     // 1. boite de dialogue de séléction du pseudo
@@ -29,8 +28,7 @@ char* display_game_over (gpointer pt)
     gtk_box_pack_end (GTK_BOX(content_area), label, TRUE, TRUE, 0);
 
         // 1.4 ajout du gtkentry
-    entry_buffer = gtk_entry_buffer_new("", 0);
-    entry = gtk_entry_new_with_buffer(entry_buffer);
+    entry = gtk_entry_new();
     gtk_entry_set_max_length(GTK_ENTRY(entry), 15);
     gtk_box_pack_end (GTK_BOX(content_area), entry, TRUE, TRUE, 0);
     strcpy(buffer, gtk_entry_get_text(GTK_ENTRY(entry)));

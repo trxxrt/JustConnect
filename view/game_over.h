@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "../controller/game.h"
-#include "../controller/options.h"
 
 // 1. déclaration des fonctions
 char* display_game_over (gpointer pt);
