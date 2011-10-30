@@ -222,6 +222,8 @@ gboolean on_brick_table_expose_event(GtkWidget *widget, GdkEventExpose *event, g
     cairo_t *cr;
     int color;
     int is_closed_path = 0;
+    t_color** colors = NULL;
+    int nb_color = 0;
     int i = 0, j = 0, x = 0, y = 0;
     t_game_board* game = (t_game_board*)pt;
     int** tab_test = (int**)malloc(game->nb_brick_x*sizeof(int*));
@@ -238,7 +240,10 @@ gboolean on_brick_table_expose_event(GtkWidget *widget, GdkEventExpose *event, g
     // 2. controle de la fermeture de boucle pour l'interface si l'option est activé
     if(game->brick[x][y]->type != EMPTY_BRICK && game->gui_color_help == TRUE)
     {
-        is_closed_path = detect_looped_brick (TRUE, tab_test, game, x, y, 0);
+        get_different_colors_from_brick(game->brick[x][y], &colors, &nb_color);
+        for(i=0; i<nb_color; i++)
+            is_closed_path = is_closed_path || detect_looped_brick (TRUE, tab_test, game, x, y, 0, colors[i]);
+
         if(is_closed_path) color = GREEN_BACKGROUND;
         else color = RED_BACKGROUND;
 

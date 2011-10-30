@@ -19,7 +19,7 @@ void display_game (t_game_board* game);
 void display_new_game (t_game_board* old_game, t_game_board* new_game);
 extern gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 extern gboolean on_next_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
-extern int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent);
+extern int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent, t_color* color_of_parent);
 gboolean on_brick_table_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 gboolean on_next_brick_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer pt);
 void draw_cairo_surface_from_brick(cairo_t* cr, t_brick* brick, int width, int height, int background_color);

@@ -28,6 +28,8 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     // 0 déclaration de variables et initialisations
     int i = 0, j = 0, k = 0, l = 0;
     int x = 0, y = 0;
+    int nb_color = 0;
+    t_color** colors = NULL;
     int is_closed_path = 0;
     t_brick* temp_brick = NULL;
     t_game_board* game = (t_game_board*)pt;
@@ -103,7 +105,10 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
     // 5. cas n°3 : on recherche à savoir si une boucle est bouclée
     if(DEBUG) printf("recherche de boucle fermée\n");
 
-    is_closed_path = detect_looped_brick (TRUE, tab_test, game, x, y, 0);
+    get_different_colors_from_brick(game->brick[x][y], &colors, &nb_color);
+
+    for(i=0; i<nb_color; i++)
+        is_closed_path = is_closed_path || detect_looped_brick (TRUE, tab_test, game, x, y, 0, colors[i]);
 
     if(is_closed_path)
     {
@@ -171,7 +176,7 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
 }
 
 /* fonction recursive de détéction de boucle fermée */
-int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent)
+int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x, int pos_y, int direction_of_parent, t_color* color_of_parent)
 {
     // 0. déclaration des vartiables temporaires
     int i;
@@ -186,7 +191,7 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
     if (pt->brick[pos_x][pos_y]->nb_stick > 0)
     {
         // 2.1 on vérifie la réciprocité entre les liens de parenté du parent et de son fils
-        if(!init) reciprocal_result = check_relationship_beetween_bricks(pt, pos_x, pos_y, direction_of_parent);
+        if(!init) reciprocal_result = check_relationship_beetween_bricks(pt, pos_x, pos_y, direction_of_parent, color_of_parent);
 
         // 2.2 puis, pour chaun de ses sticks, on applique la même fonction à ses fils
         for(i=0; i <pt->brick[pos_x][pos_y]->nb_stick; i++)
@@ -226,8 +231,8 @@ int detect_looped_brick (int init, int* tab_test[], t_game_board * pt, int pos_x
             }
 
             // 2.3 on applique la fonction à son fils, en faisant attention à boucler les interactions
-            if(tab_test[next_x][next_y] == 0) direction_result = direction_result && detect_looped_brick (FALSE, tab_test, pt, next_x, next_y, next_direction);
-            else direction_result = direction_result && check_relationship_beetween_bricks(pt, next_x, next_y, next_direction);
+            if(tab_test[next_x][next_y] == 0) direction_result = direction_result && detect_looped_brick (FALSE, tab_test, pt, next_x, next_y, next_direction, color_of_parent);
+            else direction_result = direction_result && check_relationship_beetween_bricks(pt, next_x, next_y, next_direction, color_of_parent);
         }
         return (direction_result && reciprocal_result);
     }
@@ -248,7 +253,7 @@ gboolean on_next_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpo
 }
 
 /* fonction servat à vérifier qu'un fils a bien une realtion avec le aprent qui l'a appelé */
-int check_relationship_beetween_bricks(t_game_board* pt, int pos_x, int pos_y, int direction)
+int check_relationship_beetween_bricks(t_game_board* pt, int pos_x, int pos_y, int direction, t_color* color)
 {
     // 0. déclaration des variables locales
     int i =0;
