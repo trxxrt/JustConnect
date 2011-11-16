@@ -31,7 +31,7 @@ void display_launcher_pop_up (gpointer pt)
     gtk_dialog_add_button(GTK_DIALOG(dialog), "facile", SOLO_GAME_EASY);
     gtk_dialog_add_button(GTK_DIALOG(dialog), "intermédiaire", SOLO_GAME_MEDIUM);
     gtk_dialog_add_button(GTK_DIALOG(dialog), "difficile", SOLO_GAME_HARD);
-    gtk_dialog_set_default_response(GTK_DIALOG(dialog), SOLO_GAME_EASY);
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), SOLO_GAME_MEDIUM);
 
         // 1.5 activation du widget
     gtk_widget_show_all(dialog);

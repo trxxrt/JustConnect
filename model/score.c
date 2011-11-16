@@ -30,7 +30,7 @@ t_best_score* load_best_scores()
         while(best_score->scores == NULL) best_score->scores = (t_best_score_item*)malloc(sizeof(t_best_score_item)*best_score->nb);
 
         for(i=0; i<best_score->nb; i++)
-            fscanf(file_high_score, "%s %d",  best_score->scores[i].pseudo, &best_score->scores[i].score); // on stocke les highscores dans un tableau de structure
+            temp = fscanf(file_high_score, "%s %d",  best_score->scores[i].pseudo, &best_score->scores[i].score); // on stocke les highscores dans un tableau de structure
 
         if(DEBUG) printf("Ouverture du fichier %s : %d meilleurs scores trouvés !\n", filename, best_score->nb);
 
