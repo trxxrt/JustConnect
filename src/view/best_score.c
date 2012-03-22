@@ -13,7 +13,7 @@ void display_best_score(GtkWidget* win)
     int i = 0;
     t_best_score* list = load_best_scores();
     for(i=0; i<list->nb; i++)
-        printf("%d : %s\n", list->scores[i].score, list->scores[i].pseudo);
+        if(DEBUG) printf("%d : %s\n", list->scores[i].score, list->scores[i].pseudo);
 
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (window), "Meilleurs scores");

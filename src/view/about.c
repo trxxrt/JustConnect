@@ -5,9 +5,9 @@ void display_about(GtkWidget *win)
     // 0. déclarion des variables
     GtkWidget *about = NULL;
     const gchar* names[3];
-    names[0] = "Jean-Charles Leneveu";
-    names[1] = "Mathieu delion";
-    names[2] = "Arnaud Delafont";
+    names[0] = UTF8("Jean-Charles Leneveu");
+    names[1] = UTF8("Mathieu delion");
+    names[2] = UTF8("Arnaud Delafont");
 
     // 1. création de la boite de dilogue
     about = gtk_about_dialog_new();

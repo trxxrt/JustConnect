@@ -2,7 +2,9 @@
 #define SHARED_CONST_H
 
 // 0. définition de constantes génériques
-#define DEBUG 1
+#define UTF8(string) g_locale_to_utf8(string, -1, NULL, NULL, NULL)
+
+#define DEBUG 0
 
 #define SOLO_GAME_EASY 1
 #define SOLO_GAME_MEDIUM 2
