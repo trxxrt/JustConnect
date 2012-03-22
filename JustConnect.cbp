@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="JustConnect" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/JustConnect" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/JustConnect" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="`pkg-config gtk+-2.0 --cflags`" />
+			<Add option="-Wall" />
+		</Compiler>
+		<Linker>
+			<Add option="`pkg-config gtk+-2.0 --libs`" />
+		</Linker>
+		<Unit filename="src/controller/game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/controller/game.h" />
+		<Unit filename="src/controller/init.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/controller/init.h" />
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/main.h" />
+		<Unit filename="src/model/brick.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/model/brick.h" />
+		<Unit filename="src/model/game_board.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/model/game_board.h" />
+		<Unit filename="src/model/score.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/model/score.h" />
+		<Unit filename="src/model/stick.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/model/stick.h" />
+		<Unit filename="src/shared/color.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/shared/color.h" />
+		<Unit filename="src/shared/const.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/shared/const.h" />
+		<Unit filename="src/shared/direction.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/shared/direction.h" />
+		<Unit filename="src/view/about.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/view/about.h" />
+		<Unit filename="src/view/best_score.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/view/best_score.h" />
+		<Unit filename="src/view/game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/view/game.h" />
+		<Unit filename="src/view/game_launcher.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/view/game_launcher.h" />
+		<Unit filename="src/view/game_over.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/view/game_over.h" />
+		<Unit filename="src/view/rules.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/view/rules.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

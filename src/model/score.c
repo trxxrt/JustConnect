@@ -2,7 +2,7 @@
 
 t_best_score* load_best_scores()
 {
-    char* filename = "highscore.txt";
+    char* filename = "res/highscore.txt";
     FILE* file_high_score = NULL;
     t_best_score* best_score = NULL;
     int i = 0;
@@ -44,10 +44,11 @@ t_best_score* load_best_scores()
 
 void save_best_scores(t_best_score* list)
 {
+	char* filename = "res/highscore.txt";
     FILE* file_high_score = NULL;
     int i = 0;
 
-    file_high_score=fopen("highscore.txt","w+");
+    file_high_score=fopen(filename,"w+");
     if(file_high_score!=NULL)
     {
         if(DEBUG) printf("sauvegarde des %d meilleurs scores\n", list->nb);
