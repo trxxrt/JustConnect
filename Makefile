@@ -1,4 +1,4 @@
-# makefile customisé pour le projet SimCity
+# makefile customisé pour le projet JustConnect
 
 # 1. nom du programme
 EXE=JustConnect
@@ -48,7 +48,7 @@ cleanRelease: clean
 
 clean: clean_obj
 	rm -f $(EXE)
-	rm -f Simcity.layout Simcity.depend
+	rm -f JustConnect.layout JustConnect.depend
 	rm -Rf bin
 	
 clean_obj:
