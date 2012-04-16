@@ -4,7 +4,7 @@
 EXE=JustConnect
 
 # 2. flags de compilation allegro
-FLAGS=`pkg-config gtk+-2.0 --libs` `pkg-config --cflags gtk+-2.0` -pthread -Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wswitch-default -Wall -g -O3
+FLAGS=`pkg-config gtk+-2.0 --libs` `pkg-config --cflags gtk+-2.0` -Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wswitch-default -Wall -g -O3
 
 # 3. liste des fichiers à compiler
 SHARED=$(wildcard src/shared/*.c)
