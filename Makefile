@@ -3,16 +3,16 @@
 # 1. nom du programme
 EXE=JustConnect
 
+# 2. compilateur
+CC=gcc
+
 # 2. flags de compilation allegro
-FLAGS=`pkg-config gtk+-2.0 --libs` `pkg-config --cflags gtk+-2.0` -Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wswitch-default -Wall -g -O3
+DEP_FLAGS=`pkg-config gtk+-2.0 --libs` `pkg-config --cflags gtk+-2.0`
+OPT_FLAGS=-Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wswitch-default -Wall -g -O3
+CFLAGS=$(DEP_FLAGS) $(OPT_FLAGS)
 
 # 3. liste des fichiers à compiler
-SHARED=$(wildcard src/shared/*.c)
-MODEL=$(wildcard src/model/*.c)
-VIEW=$(wildcard src/view/*.c)
-CONTROLLER=$(wildcard src/controller/*.c)
-ROOT=$(wildcard src/*.c)
-SRC=$(SHARED) $(MODEL) $(VIEW) $(CONTROLLER) $(ROOT)
+SRC=$(wildcard src/*/*.c) $(wildcard src/*.c)
 
 # 4. liste des fichiers objets à linker
 OBJ=$(SRC:.c=.o)
@@ -35,12 +35,12 @@ Release: $(EXE) clean_obj
 
 $(EXE): $(OBJ)
 	@echo "\n=== linking des objets ===\n"
-	gcc -o $@ $^ $(FLAGS)
+	$(CC) -o $@ $^ $(CFLAGS)
 	@echo "done.\n"
 
 %.o: %.c %.h
 	@echo "\n > compilation de $<"
-	gcc -o $@ -c $< $(FLAGS)
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 cleanDebug: clean
 
