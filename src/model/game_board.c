@@ -15,6 +15,7 @@ t_game_board* create_game_board (int nb_brick_x, int nb_brick_y, int rules)
 
     // 3. initialisation des éléments simples
     pt->rules = rules;
+    pt->is_running = TRUE;
     pt->best_score.value = 0;
     pt->last_score.value = 0;
     pt->score.value = 0;

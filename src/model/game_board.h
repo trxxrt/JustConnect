@@ -14,6 +14,7 @@ typedef struct struct_game_board
     int nb_brick_x;
     int nb_brick_y;
     int color;
+    gboolean is_running;
     gboolean gui_color_help;
     t_displayed_int score;
     t_displayed_int last_score;

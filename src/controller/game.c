@@ -177,7 +177,10 @@ gboolean on_brick_click_event(GtkWidget *widget, GdkEventExpose *event, gpointer
         }
     }
 
-    if(l == 0) game_over(game);
+    if(l == 0)
+    {
+    	if(game->is_running) game_over(game);
+    }
     else if(DEBUG) printf("pas de fin de jeu : des bricks sont encore superposables\n");
 
     return FALSE;
@@ -287,13 +290,16 @@ void game_over(t_game_board* game)
     // 1. print de debug
     if(DEBUG) printf("fin de jeu\n");
 
-    // 2. on demande son pseudo au joueur
+    // 2. on arrête le jeu
+    game->is_running = FALSE;
+
+    // 3. on demande son pseudo au joueur
     pseudo = display_game_over(game);
 
-    // 3. on insère le score dans la liste des meilleurs scores
-    list = insert_in_best_score(list, game->score.value, pseudo);
-    save_best_scores(list);
+    // 4. on insère le score dans la liste des meilleurs scores
+    if(strcmp(pseudo,"") != 0) list = insert_in_best_score(list, game->score.value, pseudo);
+    if(strcmp(pseudo,"") != 0) save_best_scores(list);
 
-    // 4. on affiche les meilleurs scores
+    // 5. on affiche les meilleurs scores
     display_best_score(game->window);
 }
