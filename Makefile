@@ -8,7 +8,7 @@ CC=gcc
 
 # 3. flags de compilation allegro
 DEP_FLAGS=`pkg-config gtk+-2.0 --libs` `pkg-config --cflags gtk+-2.0`
-OPT_FLAGS=-Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wswitch-default -Wall -g -O3
+OPT_FLAGS=-Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wswitch-default -Wall -O3
 CFLAGS=$(DEP_FLAGS) $(OPT_FLAGS)
 
 # 4. liste des fichiers à compiler
@@ -70,6 +70,7 @@ clean: clean_obj clean_cdb
 
 clean_cdb:
 	rm -f $(EXE).layout $(EXE).depend
+	find . -name "*.bak" -exec rm -f {} \;
 	rm -Rf bin
 
 clean_zip:
