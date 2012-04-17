@@ -54,7 +54,8 @@ void display_launcher_pop_up (gpointer pt)
     gtk_misc_set_alignment(GTK_MISC(misc), 0, 0.5);
     gtk_box_pack_start (GTK_BOX(content_area), misc, TRUE, TRUE, 0);
     gtk_box_set_spacing(GTK_BOX(content_area), 10);
-    misc = gtk_spin_button_new_with_range(5.0, 30.0, 1.0);
+    misc = gtk_spin_button_new_with_range(5.0, 20.0, 1.0);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(misc), 9.0);
     gtk_box_pack_start (GTK_BOX(content_area), misc, TRUE, TRUE, 0);
     g_object_ref(misc);
 
