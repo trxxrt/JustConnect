@@ -6,16 +6,19 @@ EXE=JustConnect
 # 2. compilateur
 CC=gcc
 
-# 3. flags de compilation allegro
+# 3. extension des sources
+EXT=c
+
+# 4. flags de compilation allegro
 DEP_FLAGS=`pkg-config gtk+-2.0 --libs` `pkg-config --cflags gtk+-2.0`
 OPT_FLAGS=-Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wswitch-default -Wall -O3
 CFLAGS=$(DEP_FLAGS) $(OPT_FLAGS)
 
-# 4. liste des fichiers à compiler
-SRC=$(wildcard src/*/*.c) $(wildcard src/*.c)
+# 5. liste des fichiers à compiler
+SRC=$(wildcard src/*/*.$(EXT)) $(wildcard src/*.$(EXT))
 
-# 5. liste des fichiers objets à linker
-OBJ=$(SRC:.c=.o)
+# 6. liste des fichiers objets à linker
+OBJ=$(SRC:.$(EXT)=.o)
 
 ###################################################
 
@@ -55,7 +58,7 @@ $(EXE): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 	@echo "done.\n"
 
-%.o: %.c %.h
+%.o: %.$(EXT) %.h
 	@echo "\n > compilation de $<"
 	$(CC) $(CFLAGS) -o $@ -c $<
 
