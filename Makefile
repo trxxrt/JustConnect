@@ -1,4 +1,4 @@
-# makefile customisé pour le projet JustConnect
+# makefile générique customisé pour le projet JustConnect
 
 #######################################################
 
